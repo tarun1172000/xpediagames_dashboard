@@ -25,6 +25,7 @@ const LoginPage = () => {
 
   return (
     <Box
+     className="main-box-login"
       sx={{
         display: 'flex',
         justifyContent: 'center',

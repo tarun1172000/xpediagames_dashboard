@@ -1,65 +1,87 @@
-import React, { useState } from 'react';
-import { Drawer, List, ListItem, ListItemIcon, ListItemText, Divider, IconButton, Box } from '@mui/material';
-import { Home, Bookmark, Person, Gamepad, Storefront, LocalOffer, TrendingUp, Article, Close, Add, Edit, Delete, ArrowDropDown, ArrowDropUp } from '@mui/icons-material';
-import { useTheme } from '@mui/material/styles';
-import CreateBanner from '../components/Banner/CreateBanner';
+import React, { useState } from "react";
+import {
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+  IconButton,
+  Box,
+} from "@mui/material";
+import {
+  Home,
+  Bookmark,
+  Person,
+  Gamepad,
+  Storefront,
+  LocalOffer,
+  TrendingUp,
+  Article,
+  Close,
+  Add,
+  Edit,
+  Delete,
+  ArrowDropDown,
+  ArrowDropUp,
+} from "@mui/icons-material";
+import { useTheme } from "@mui/material/styles";
+import CreateBanner from "../components/Banner/CreateBanner";
 
 // Import the xpedia.png image
-import xpediaImage from '../assets/xpedia.png'; // Update the path according to your project structure
+import xpediaImage from "../assets/xpedia.png"; // Update the path according to your project structure
+import { NavLink } from "react-router-dom";
 
 const Sidebar = () => {
   const theme = useTheme();
   const [bannerOpen, setBannerOpen] = useState(false); // state to handle the "Banner" section toggling
-  const [activePage, setActivePage] = useState(''); // State to track active page
+  const [activePage, setActivePage] = useState(""); // State to track active page
 
   const menuItems = [
-    { text: 'Banner', icon: <Home /> }, // Main Banner item
-    { text: 'Blog', icon: <Article /> },
-    { text: 'Game', icon: <Gamepad /> },
-    { text: 'Promo', icon: <LocalOffer /> },
-    { text: 'Store', icon: <Storefront /> },
-    { text: 'Test', icon: <Bookmark /> },
-    { text: 'Trending Game', icon: <TrendingUp /> },
-    { text: 'Users', icon: <Person /> },  // Using Material-UI Person icon for "Users"
+    { text: "Banner", icon: <Home /> }, // Main Banner item
+    { text: "Blog", icon: <Article /> },
+    { text: "Game", icon: <Gamepad /> },
+    { text: "Promo", icon: <LocalOffer /> },
+    { text: "Brands", icon: <Storefront /> },
+    { text: "Test", icon: <Bookmark /> },
+    { text: "Trending Game", icon: <TrendingUp /> },
+    { text: "Users", icon: <Person /> }, // Using Material-UI Person icon for "Users"
   ];
 
-  const customColor = '#f48d4c'; // Base color
-  const hoverColor = '#632600';  // Hover color for background
-  const darkModeBackground = theme.palette.mode === 'dark' ? 'black' : 'white'; // Dark mode background
+  const customColor = "#f48d4c"; // Base color
+  const hoverColor = "#632600"; // Hover color for background
+  const darkModeBackground = theme.palette.mode === "dark" ? "black" : "white"; // Dark mode background
 
   // Handler for actions
   const handleBannerAction = (action) => {
     switch (action) {
-      case 'create':
-        setActivePage('createBanner'); // Switch to CreateBanner page
+      case "create":
+        setActivePage("createBanner"); // Switch to CreateBanner page
         break;
-      case 'update':
-        console.log('Update Banner action triggered');
+      case "update":
+        console.log("Update Banner action triggered");
         break;
-      case 'delete':
-        console.log('Delete Banner action triggered');
+      case "delete":
+        console.log("Delete Banner action triggered");
         break;
       default:
-        console.log('Unknown action');
+        console.log("Unknown action");
     }
   };
 
   return (
     <>
-      {/* Render CreateBanner component if the activePage is 'createBanner' */}
-      {activePage === 'createBanner' ? (
-        <CreateBanner />
-      ) : (
-        <Drawer
+      <Drawer
+        
           sx={{
             width: 320,
             flexShrink: 0,
-            '& .MuiDrawer-paper': {
+            "& .MuiDrawer-paper": {
               width: 320,
               backgroundColor: darkModeBackground,
               color: theme.palette.text.primary,
-              borderRadius: '16px',
-              padding: '16px',
+              borderRadius: "16px",
+              padding: "16px",
             },
           }}
           variant="permanent" // Make the drawer always open
@@ -71,10 +93,11 @@ const Sidebar = () => {
               src={xpediaImage}
               alt="Xpedia"
               style={{
-                width: '80%',
-                height: 'auto',
-                borderRadius: '8px',
-                marginTop: '10px',
+                width: "80%",
+                height: 80,
+                objectFit:"contain",
+                borderRadius: "8px",
+                marginTop: "10px",
               }}
             />
           </Box>
@@ -84,25 +107,29 @@ const Sidebar = () => {
             {/* Menu Items */}
             <List>
               {menuItems.map((item, index) => (
+                
                 <div key={index}>
+                {
+                  console.log("item",item)
+                }
                   {/* Banner item with sub-menu */}
-                  {item.text === 'Banner' ? (
+                  {item.text === "Banner" ? (
                     <ListItem
                       button
                       onClick={() => setBannerOpen(!bannerOpen)} // Toggle banner options
                       sx={{
-                        '&:hover': {
+                        "&:hover": {
                           backgroundColor: hoverColor, // Hover color for list item background
                         },
-                        padding: '12px 16px',
-                        borderRadius: '8px',
+                        padding: "12px 16px",
+                        borderRadius: "8px",
                       }}
                     >
                       <ListItemIcon
                         sx={{
                           color: customColor,
-                          '&:hover': {
-                            color: 'black',
+                          "&:hover": {
+                            color: "black",
                           },
                         }}
                       >
@@ -116,28 +143,33 @@ const Sidebar = () => {
                       />
                       {/* Toggle caret icon below the "Banner" icon */}
                       {bannerOpen ? (
-                        <ArrowDropUp sx={{ color: customColor, marginLeft: '20px' }} />  // Up caret when open
+                        <ArrowDropUp
+                          sx={{ color: customColor, marginLeft: "20px" }}
+                        /> // Up caret when open
                       ) : (
-                        <ArrowDropDown sx={{ color: customColor, marginLeft: '20px' }} />  // Down caret when closed
+                        <ArrowDropDown
+                          sx={{ color: customColor, marginLeft: "20px" }}
+                        /> // Down caret when closed
                       )}
                     </ListItem>
                   ) : (
                     // Regular menu items
+                    <NavLink className={"sidebarlinks"} to={item.text}>
                     <ListItem
                       button
                       sx={{
-                        '&:hover': {
+                        "&:hover": {
                           backgroundColor: hoverColor,
                         },
-                        padding: '12px 16px',
-                        borderRadius: '8px',
+                        padding: "12px 16px",
+                        borderRadius: "8px",
                       }}
                     >
                       <ListItemIcon
                         sx={{
                           color: customColor,
-                          '&:hover': {
-                            color: 'black',
+                          "&:hover": {
+                            color: "black",
                           },
                         }}
                       >
@@ -150,17 +182,19 @@ const Sidebar = () => {
                         }}
                       />
                     </ListItem>
+                    </NavLink>
+                  
                   )}
 
                   {/* Banner actions dropdown (only visible when 'Banner' is clicked) */}
-                  {bannerOpen && item.text === 'Banner' && (
+                  {bannerOpen && item.text === "Banner" && (
                     <div>
                       <ListItem
                         button
-                        onClick={() => handleBannerAction('create')}
+                        onClick={() => handleBannerAction("create")}
                         sx={{
-                          paddingLeft: '40px', // Indent for sub-menu
-                          '&:hover': {
+                          paddingLeft: "40px", // Indent for sub-menu
+                          "&:hover": {
                             backgroundColor: hoverColor, // Same hover effect as the other menu items
                           },
                         }}
@@ -168,8 +202,8 @@ const Sidebar = () => {
                         <ListItemIcon
                           sx={{
                             color: customColor,
-                            '&:hover': {
-                              color: 'black',
+                            "&:hover": {
+                              color: "black",
                             },
                           }}
                         >
@@ -184,10 +218,10 @@ const Sidebar = () => {
                       </ListItem>
                       <ListItem
                         button
-                        onClick={() => handleBannerAction('update')}
+                        onClick={() => handleBannerAction("update")}
                         sx={{
-                          paddingLeft: '40px',
-                          '&:hover': {
+                          paddingLeft: "40px",
+                          "&:hover": {
                             backgroundColor: hoverColor,
                           },
                         }}
@@ -195,8 +229,8 @@ const Sidebar = () => {
                         <ListItemIcon
                           sx={{
                             color: customColor,
-                            '&:hover': {
-                              color: 'black',
+                            "&:hover": {
+                              color: "black",
                             },
                           }}
                         >
@@ -211,10 +245,10 @@ const Sidebar = () => {
                       </ListItem>
                       <ListItem
                         button
-                        onClick={() => handleBannerAction('delete')}
+                        onClick={() => handleBannerAction("delete")}
                         sx={{
-                          paddingLeft: '40px',
-                          '&:hover': {
+                          paddingLeft: "40px",
+                          "&:hover": {
                             backgroundColor: hoverColor,
                           },
                         }}
@@ -222,8 +256,8 @@ const Sidebar = () => {
                         <ListItemIcon
                           sx={{
                             color: customColor,
-                            '&:hover': {
-                              color: 'black',
+                            "&:hover": {
+                              color: "black",
                             },
                           }}
                         >
@@ -244,7 +278,6 @@ const Sidebar = () => {
             <Divider sx={{ borderColor: customColor }} />
           </Box>
         </Drawer>
-      )}
     </>
   );
 };
