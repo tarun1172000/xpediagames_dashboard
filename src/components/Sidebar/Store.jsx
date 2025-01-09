@@ -45,13 +45,13 @@ const theme = createTheme({
   },
 });
 
-function Game() {
-  const [gameData, setgameData] = useState([]);
+function Store() {
+  const [StoreData, setStoreData] = useState([]);
   const [open, setOpen] = useState(false); // State to control Modal visibility
-  const [editinggame, setEditinggame] = useState(null); // game being edited
+  const [editingStore, setEditingStore] = useState(null); // Store being edited
   const [formData, setFormData] = useState({
     title: '',
-    client_name: '',
+    store_name: '',
     short_desc: '',
     category: '',
     author: '',
@@ -61,6 +61,8 @@ function Game() {
     meta_keyword: '',
     post_data: false,
     trending: false,
+    store_img : '',
+    about_store : ""
   });
 
   const [loading, setLoading] = useState(false); // Loading state for the PUT request
@@ -68,42 +70,45 @@ function Game() {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success'); // 'success', 'error'
 
-  // State to store the game details for viewing
-  const [viewinggame, setViewinggame] = useState(null);
-  const [viewingOpen, setViewingOpen] = useState(false); // Modal visibility for viewing game
+  // State to store the Store details for viewing
+  const [viewingStore, setViewingStore] = useState(null);
+  const [viewingOpen, setViewingOpen] = useState(false); // Modal visibility for viewing Store
 
-  // Fetch game data on component mount
+  // Fetch Store data on component mount
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://api.xpediagames.com/api/games');
+        const response = await fetch('http://api.xpediagames.com/api/stores');
         const data = await response.json();
-        console.log("game ", data)
+        console.log("Store ", data)
 
-        setgameData(data);
+        setStoreData(data);
       } catch (error) {
-        console.error('Error fetching game data:', error);
+        console.error('Error fetching Store data:', error);
       }
     };
 
     fetchData();
   }, []);
 
-  // Open the modal to edit a game
-  const handleOpenModal = (game) => {
-    setEditinggame(game);
+  // Open the modal to edit a Store
+  const handleOpenModal = (Store) => {
+    setEditingStore(Store);
     setFormData({
-      client_name: game.client_name,
-      trending: game.trending,
-      short_desc: game.short_desc,
-      category: game.category,
-      author: game.author,
-      all_data: game.all_data,
-      banner: game.banner,
-      campaign_link: game.campaign_link,
-      meta_keyword: game.meta_keyword.join(', '),
-      post_data: game.post_data,
-      trending: game.trending,
+      client_name: Store.client_name,
+      trending: Store.trending,
+      short_desc: Store.short_desc,
+      category: Store.category,
+      author: Store.author,
+      all_data: Store.all_data,
+      banner: Store.banner,
+      campaign_link: Store.campaign_link,
+      meta_keyword: Store.meta_keyword.join(', '),
+      post_data: Store.post_data,
+      trending: Store.trending,
+      store_img:Store.store_img,
+      store_name : Store.store_name,
+      about_store : Store.about_store
     });
     setOpen(true);
   };
@@ -111,7 +116,7 @@ function Game() {
   // Close the modal
   const handleCloseModal = () => {
     setOpen(false);
-    setEditinggame(null);
+    setEditingStore(null);
   };
 
   // Handle form field changes
@@ -140,7 +145,7 @@ function Game() {
     try {
       const token = localStorage.getItem('access_token');
 
-      const response = await fetch(`http://api.xpediagames.com/api/game/${editinggame._id}`, {
+      const response = await fetch(`http://api.xpediagames.com/api/store/${editingStore._id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -154,36 +159,36 @@ function Game() {
       });
 
       if (response.ok) {
-        const updatedgame = await response.json();
+        const updatedStore = await response.json();
         // Update the state to reflect the changes
-        setgameData((prevgames) =>
-          prevgames.map((game) => (game._id === updatedgame._id ? updatedgame : game))
+        setStoreData((prevStores) =>
+          prevStores.map((Store) => (Store._id === updatedStore._id ? updatedStore : Store))
         );
-        showSnackbar('game updated successfully', 'success');
+        showSnackbar('Store updated successfully', 'success');
         handleCloseModal();
 
         setTimeout(() => {
           window.location.reload(); // Reload the entire page
         }, 500);
       } else {
-        showSnackbar('Error updating the game', 'error');
+        showSnackbar('Error updating the Store', 'error');
       }
     } catch (error) {
-      console.error('Error updating game:', error);
-      showSnackbar('Error updating the game', 'error');
+      console.error('Error updating Store:', error);
+      showSnackbar('Error updating the Store', 'error');
     } finally {
       setLoading(false);
     }
   };
 
 
-  // Handle deleting a game
-  const handleDeletegame = async (id) => {
+  // Handle deleting a Store
+  const handleDeleteStore = async (id) => {
     try {
 
       const token = localStorage.getItem('access_token');
 
-      const response = await fetch(`http://api.xpediagames.com/api/game/${id}`, {
+      const response = await fetch(`http://api.xpediagames.com/api/store/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -192,14 +197,14 @@ function Game() {
       });
 
       if (response.ok) {
-        setgameData((prevgames) => prevgames.filter((game) => game._id !== id));
-        showSnackbar('game deleted successfully', 'success');
+        setStoreData((prevStores) => prevStores.filter((Store) => Store._id !== id));
+        showSnackbar('Store deleted successfully', 'success');
       } else {
-        showSnackbar('Error deleting the game', 'error');
+        showSnackbar('Error deleting the Store', 'error');
       }
     } catch (error) {
-      console.error('Error deleting game:', error);
-      showSnackbar('Error deleting the game', 'error');
+      console.error('Error deleting Store:', error);
+      showSnackbar('Error deleting the Store', 'error');
     }
   };
 
@@ -216,11 +221,11 @@ function Game() {
     setSnackbarOpen(false);
   };
 
-  // Handle the 'View game' action
-  const handleViewgame = async (id) => {
+  // Handle the 'View Store' action
+  const handleViewStore = async (id) => {
     try {
 
-      const response = await fetch(`http://api.xpediagames.com/api/game/${id}`, {
+      const response = await fetch(`http://api.xpediagames.com/api/store/${id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -228,22 +233,22 @@ function Game() {
       });
 
       if (response.ok) {
-        const game = await response.json();
-        setViewinggame(game); // Set the game data for viewing
-        setViewingOpen(true); // Open the modal to show the game details
+        const Store = await response.json();
+        setViewingStore(Store); // Set the Store data for viewing
+        setViewingOpen(true); // Open the modal to show the Store details
       } else {
-        showSnackbar('Error fetching the game details', 'error');
+        showSnackbar('Error fetching the Store details', 'error');
       }
     } catch (error) {
-      console.error('Error fetching game:', error);
-      showSnackbar('Error fetching the game details', 'error');
+      console.error('Error fetching Store:', error);
+      showSnackbar('Error fetching the Store details', 'error');
     }
   };
 
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ paddingRight: '10px', paddingLeft: '10px', maxWidth: '1200px', margin: '50px auto' }}>
-        {/* Add New game Button */}
+        {/* Add New Store Button */}
         <Box sx={{ display: "flex", justifyContent: "flex-end", marginBottom: "25px" }}>
           <Button
             variant="contained"
@@ -261,7 +266,7 @@ function Game() {
               },
             }}
           >
-            Add New game
+            Add New Store
           </Button>
           <Button
             variant="contained"
@@ -284,13 +289,13 @@ function Game() {
         </Box>
 
         <Grid container spacing={4}>
-          {gameData.length === 0 ? (
+          {StoreData.length === 0 ? (
             <Typography variant="h6" align="center" fullWidth>
               Loading...
             </Typography>
           ) : (
-            gameData.map((game) => (
-              <Grid item xs={12} sm={6} md={3} key={game._id}>
+            StoreData.map((Store) => (
+              <Grid item xs={12} sm={6} md={3} key={Store._id}>
                 <Card
                   sx={{
                     cursor: 'pointer',
@@ -305,13 +310,13 @@ function Game() {
                     },
                   }}
                 >
-                  <CardMedia component="img" height="200" image={game.banner} alt={game.title} />
+                  <CardMedia component="img" height="200" padding = "10" image={Store.store_img} alt={Store.title} />
                   <CardContent>
                     <Typography variant="h6" noWrap color="text.primary">
-                      {game.client_name}
+                      {Store.store_name}
                     </Typography>
                     <Typography variant="body2" color="text.secondary" noWrap>
-                      {game.short_desc}
+                      {Store.about_store}
                     </Typography>
                   </CardContent>
 
@@ -328,20 +333,20 @@ function Game() {
                     <IconButton
                       color="primary"
                       sx={{ marginRight: '5px' }}
-                      onClick={() => handleViewgame(game._id)} // Open view modal
+                      onClick={() => handleViewStore(Store._id)} // Open view modal
                     >
                       <VisibilityIcon />
                     </IconButton>
                     <IconButton
                       color="primary"
                       sx={{ marginRight: '5px' }}
-                      onClick={() => handleOpenModal(game)} // Open edit modal
+                      onClick={() => handleOpenModal(Store)} // Open edit modal
                     >
                       <EditIcon />
                     </IconButton>
                     <IconButton
                       color="primary"
-                      onClick={() => handleDeletegame(game._id)} // Delete game
+                      onClick={() => handleDeleteStore(Store._id)} // Delete Store
                     >
                       <DeleteIcon />
                     </IconButton>
@@ -375,7 +380,7 @@ function Game() {
         </Snackbar>
 
 
-        {/* Modal for adding/editing game */}
+        {/* Modal for adding/editing Store */}
         <Modal open={open} onClose={handleCloseModal} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
           <Box sx={{
             padding: '20px',
@@ -386,7 +391,7 @@ function Game() {
             height: '80vh',
             overflowY: 'scroll',
           }}>
-            <Typography variant="h6" gutterBottom>{editinggame ? 'Edit game' : 'Add game'}</Typography>
+            <Typography variant="h6" gutterBottom>{editingStore ? 'Edit Store' : 'Add Store'}</Typography>
 
             <form onSubmit={handleSubmit}>
               <TextField 
@@ -494,7 +499,7 @@ function Game() {
           </Box>
         </Modal>
 
-        {/* Modal for Viewing game Details */}
+        {/* Modal for Viewing Store Details */}
         <Modal
           open={viewingOpen}
           onClose={() => setViewingOpen(false)}
@@ -513,61 +518,61 @@ function Game() {
               boxShadow: 24,
             }}
           >
-            {viewinggame ? (
+            {viewingStore ? (
               <>
                 {/* Title */}
                 <Typography variant="h4" color="text.primary" gutterBottom sx={{ fontWeight: 'bold' }}>
-                  {viewinggame.title}
+                  {viewingStore.title}
                 </Typography>
 
                 {/* Client Name */}
                 <Typography variant="body1" color="text.secondary" gutterBottom>
-                  <strong>Client Name:</strong> <span style={{ color: '#f29c1e' }}>{viewinggame.client_name}</span>
+                  <strong>Client Name:</strong> <span style={{ color: '#f29c1e' }}>{viewingStore.client_name}</span>
                 </Typography>
 
                 {/* Trending */}
                 <Typography variant="body1" color="text.secondary" gutterBottom>
-                  <strong>Trending:</strong> <span style={{ color: '#f29c1e' }}>{viewinggame.trending ? 'Yes' : 'No'}</span>
+                  <strong>Trending:</strong> <span style={{ color: '#f29c1e' }}>{viewingStore.trending ? 'Yes' : 'No'}</span>
                 </Typography>
 
                 {/* Category */}
                 <Typography variant="body1" color="text.secondary" gutterBottom>
-                  <strong>Category:</strong> <span style={{ color: '#f29c1e' }}>{viewinggame.category}</span>
+                  <strong>Category:</strong> <span style={{ color: '#f29c1e' }}>{viewingStore.category}</span>
                 </Typography>
 
-                {/* Game Type */}
+                {/* Store Type */}
                 <Typography variant="body1" color="text.secondary" gutterBottom>
-                  <strong>Game Type:</strong> <span style={{ color: '#f29c1e' }}>{viewinggame.game_type}</span>
+                  <strong>Store Type:</strong> <span style={{ color: '#f29c1e' }}>{viewingStore.Store_type}</span>
                 </Typography>
 
                 {/* Short Description */}
                 <Typography variant="body1" color="text.secondary" gutterBottom>
-                  <strong>Short Description:</strong> <span style={{ color: '#f29c1e' }}>{viewinggame.short_desc}</span>
+                  <strong>Short Description:</strong> <span style={{ color: '#f29c1e' }}>{viewingStore.short_desc}</span>
                 </Typography>
 
                 {/* Description */}
                 <Typography variant="body1" color="text.secondary" gutterBottom>
-                  <strong>Description:</strong> <span style={{ color: '#f29c1e' }}>{viewinggame.description}</span>
+                  <strong>Description:</strong> <span style={{ color: '#f29c1e' }}>{viewingStore.description}</span>
                 </Typography>
 
                 {/* Meta Keywords */}
                 <Typography variant="body1" color="text.secondary" gutterBottom>
-                  <strong>Meta Keywords:</strong> <span style={{ color: '#f29c1e' }}>{viewinggame.meta_keyword.join(', ')}</span>
+                  <strong>Meta Keywords:</strong> <span style={{ color: '#f29c1e' }}>{viewingStore.meta_keyword.join(', ')}</span>
                 </Typography>
 
                 {/* Campaign Link */}
                 <Typography variant="body1" color="text.secondary" gutterBottom>
                   <strong>Campaign Link:</strong>{' '}
-                  <a href={viewinggame.campaign_link} target="_blank" rel="noopener noreferrer" style={{ color: '#f29c1e' }}>
-                    {viewinggame.campaign_link}
+                  <a href={viewingStore.campaign_link} target="_blank" rel="noopener noreferrer" style={{ color: '#f29c1e' }}>
+                    {viewingStore.campaign_link}
                   </a>
                 </Typography>
 
                 {/* Banner */}
                 <Box sx={{ marginBottom: '20px', borderRadius: '8px', overflow: 'hidden' }}>
                   <img
-                    src={viewinggame.banner}
-                    alt={viewinggame.title}
+                    src={viewingStore.banner}
+                    alt={viewingStore.title}
                     style={{ width: '100%', borderRadius: '8px', boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)' }}
                   />
                 </Box>
@@ -576,7 +581,7 @@ function Game() {
                 <Typography variant="body1" color="text.primary" gutterBottom>
                   <strong>Conditions:</strong>
                   <ul style={{ listStyleType: 'disc', paddingLeft: '20px' }}>
-                    {viewinggame.conditions.map((condition, index) => (
+                    {viewingStore.conditions.map((condition, index) => (
                       <li key={index} style={{ marginBottom: '8px' }}>
                         <Typography variant="body2" color="text.secondary">
                           {condition}
@@ -590,7 +595,7 @@ function Game() {
                 <Typography variant="body1" color="text.primary" gutterBottom>
                   <strong>Features:</strong>
                   <ul style={{ listStyleType: 'disc', paddingLeft: '20px' }}>
-                    {viewinggame.feature.map((feature, index) => (
+                    {viewingStore.feature.map((feature, index) => (
                       <li key={index} style={{ marginBottom: '8px' }}>
                         <Typography variant="body2" color="text.secondary">
                           {feature}
@@ -603,7 +608,7 @@ function Game() {
                 {/* FAQs */}
                 <Typography variant="body1" color="text.primary" gutterBottom>
                   <strong>FAQs:</strong>
-                  {viewinggame.faq.map((faq) => (
+                  {viewingStore.faq.map((faq) => (
                     <Box key={faq.id} sx={{ marginBottom: '12px' }}>
                       <Typography variant="body2" color="text.primary" sx={{ fontWeight: 'bold' }}>
                         Q: {faq.question}
@@ -617,7 +622,7 @@ function Game() {
               </>
             ) : (
               <Typography variant="body1" color="text.secondary">
-                Loading game details...
+                Loading Store details...
               </Typography>
             )}
 
@@ -649,4 +654,4 @@ function Game() {
   );
 }
 
-export default Game;
+export default Store;

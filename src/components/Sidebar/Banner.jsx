@@ -45,10 +45,10 @@ const theme = createTheme({
   },
 });
 
-function Game() {
-  const [gameData, setgameData] = useState([]);
+function Banner() {
+  const [BannerData, setBannerData] = useState([]);
   const [open, setOpen] = useState(false); // State to control Modal visibility
-  const [editinggame, setEditinggame] = useState(null); // game being edited
+  const [editingBanner, setEditingBanner] = useState(null); // Banner being edited
   const [formData, setFormData] = useState({
     title: '',
     client_name: '',
@@ -68,42 +68,42 @@ function Game() {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success'); // 'success', 'error'
 
-  // State to store the game details for viewing
-  const [viewinggame, setViewinggame] = useState(null);
-  const [viewingOpen, setViewingOpen] = useState(false); // Modal visibility for viewing game
+  // State to store the Banner details for viewing
+  const [viewingBanner, setViewingBanner] = useState(null);
+  const [viewingOpen, setViewingOpen] = useState(false); // Modal visibility for viewing Banner
 
-  // Fetch game data on component mount
+  // Fetch Banner data on component mount
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://api.xpediagames.com/api/games');
+        const response = await fetch('http://api.xpediagames.com/api/banners');
         const data = await response.json();
-        console.log("game ", data)
+        console.log("Banner ", data)
 
-        setgameData(data);
+        setBannerData(data);
       } catch (error) {
-        console.error('Error fetching game data:', error);
+        console.error('Error fetching Banner data:', error);
       }
     };
 
     fetchData();
   }, []);
 
-  // Open the modal to edit a game
-  const handleOpenModal = (game) => {
-    setEditinggame(game);
+  // Open the modal to edit a Banner
+  const handleOpenModal = (Banner) => {
+    setEditingBanner(Banner);
     setFormData({
-      client_name: game.client_name,
-      trending: game.trending,
-      short_desc: game.short_desc,
-      category: game.category,
-      author: game.author,
-      all_data: game.all_data,
-      banner: game.banner,
-      campaign_link: game.campaign_link,
-      meta_keyword: game.meta_keyword.join(', '),
-      post_data: game.post_data,
-      trending: game.trending,
+      title: Banner.title,
+      client_name: Banner.client_name,
+      short_desc: Banner.short_desc,
+      category: Banner.category,
+      author: Banner.author,
+      all_data: Banner.all_data,
+      banner: Banner.banner,
+      campaign_link: Banner.campaign_link,
+      meta_keyword: Banner.meta_keyword.join(', '),
+      post_data: Banner.post_data,
+      trending: Banner.trending,
     });
     setOpen(true);
   };
@@ -111,7 +111,7 @@ function Game() {
   // Close the modal
   const handleCloseModal = () => {
     setOpen(false);
-    setEditinggame(null);
+    setEditingBanner(null);
   };
 
   // Handle form field changes
@@ -140,7 +140,7 @@ function Game() {
     try {
       const token = localStorage.getItem('access_token');
 
-      const response = await fetch(`http://api.xpediagames.com/api/game/${editinggame._id}`, {
+      const response = await fetch(`http://api.xpediagames.com/api/Banner/${editingBanner._id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -154,36 +154,36 @@ function Game() {
       });
 
       if (response.ok) {
-        const updatedgame = await response.json();
+        const updatedBanner = await response.json();
         // Update the state to reflect the changes
-        setgameData((prevgames) =>
-          prevgames.map((game) => (game._id === updatedgame._id ? updatedgame : game))
+        setBannerData((prevBanners) =>
+          prevBanners.map((Banner) => (Banner._id === updatedBanner._id ? updatedBanner : Banner))
         );
-        showSnackbar('game updated successfully', 'success');
+        showSnackbar('Banner updated successfully', 'success');
         handleCloseModal();
 
         setTimeout(() => {
           window.location.reload(); // Reload the entire page
         }, 500);
       } else {
-        showSnackbar('Error updating the game', 'error');
+        showSnackbar('Error updating the Banner', 'error');
       }
     } catch (error) {
-      console.error('Error updating game:', error);
-      showSnackbar('Error updating the game', 'error');
+      console.error('Error updating Banner:', error);
+      showSnackbar('Error updating the Banner', 'error');
     } finally {
       setLoading(false);
     }
   };
 
 
-  // Handle deleting a game
-  const handleDeletegame = async (id) => {
+  // Handle deleting a Banner
+  const handleDeleteBanner = async (id) => {
     try {
 
       const token = localStorage.getItem('access_token');
 
-      const response = await fetch(`http://api.xpediagames.com/api/game/${id}`, {
+      const response = await fetch(`http://api.xpediagames.com/api/Banner/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -192,14 +192,14 @@ function Game() {
       });
 
       if (response.ok) {
-        setgameData((prevgames) => prevgames.filter((game) => game._id !== id));
-        showSnackbar('game deleted successfully', 'success');
+        setBannerData((prevBanners) => prevBanners.filter((Banner) => Banner._id !== id));
+        showSnackbar('Banner deleted successfully', 'success');
       } else {
-        showSnackbar('Error deleting the game', 'error');
+        showSnackbar('Error deleting the Banner', 'error');
       }
     } catch (error) {
-      console.error('Error deleting game:', error);
-      showSnackbar('Error deleting the game', 'error');
+      console.error('Error deleting Banner:', error);
+      showSnackbar('Error deleting the Banner', 'error');
     }
   };
 
@@ -216,11 +216,12 @@ function Game() {
     setSnackbarOpen(false);
   };
 
-  // Handle the 'View game' action
-  const handleViewgame = async (id) => {
+  // Handle the 'View Banner' action
+  const handleViewBanner = async (id) => {
     try {
+      // const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTczNjMyMjg1MCwianRpIjoiZjlhZTQ0YTEtZmFjNS00MzY5LWI0NGQtOGU4ZWUyMGM5MDIxIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InByaXR1bEBmbHloZWFkbWVkaWEuY29tIiwibmJmIjoxNzM2MzIyODUwLCJjc3JmIjoiNDI2YzEwOGYtMzEwOC00YzA3LWI5MzgtZjdkNTNjZTQwODQ5IiwiZXhwIjoxNzM2MzIzNzUwfQ.Z0A-l2Ky5IdAkBiHdEvWxthquwJ_cCooV9UgzmzJEMk";
 
-      const response = await fetch(`http://api.xpediagames.com/api/game/${id}`, {
+      const response = await fetch(`http://api.xpediagames.com/api/Banner/${id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -228,22 +229,22 @@ function Game() {
       });
 
       if (response.ok) {
-        const game = await response.json();
-        setViewinggame(game); // Set the game data for viewing
-        setViewingOpen(true); // Open the modal to show the game details
+        const Banner = await response.json();
+        setViewingBanner(Banner); // Set the Banner data for viewing
+        setViewingOpen(true); // Open the modal to show the Banner details
       } else {
-        showSnackbar('Error fetching the game details', 'error');
+        showSnackbar('Error fetching the Banner details', 'error');
       }
     } catch (error) {
-      console.error('Error fetching game:', error);
-      showSnackbar('Error fetching the game details', 'error');
+      console.error('Error fetching Banner:', error);
+      showSnackbar('Error fetching the Banner details', 'error');
     }
   };
 
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ paddingRight: '10px', paddingLeft: '10px', maxWidth: '1200px', margin: '50px auto' }}>
-        {/* Add New game Button */}
+        {/* Add New Banner Button */}
         <Box sx={{ display: "flex", justifyContent: "flex-end", marginBottom: "25px" }}>
           <Button
             variant="contained"
@@ -261,7 +262,7 @@ function Game() {
               },
             }}
           >
-            Add New game
+            Add New Banner
           </Button>
           <Button
             variant="contained"
@@ -284,13 +285,13 @@ function Game() {
         </Box>
 
         <Grid container spacing={4}>
-          {gameData.length === 0 ? (
+          {BannerData.length === 0 ? (
             <Typography variant="h6" align="center" fullWidth>
               Loading...
             </Typography>
           ) : (
-            gameData.map((game) => (
-              <Grid item xs={12} sm={6} md={3} key={game._id}>
+            BannerData.map((Banner) => (
+              <Grid item xs={12} sm={6} md={3} key={Banner._id}>
                 <Card
                   sx={{
                     cursor: 'pointer',
@@ -305,13 +306,13 @@ function Game() {
                     },
                   }}
                 >
-                  <CardMedia component="img" height="200" image={game.banner} alt={game.title} />
+                  <CardMedia component="img" height="200" image={Banner.banner} alt={Banner.title} />
                   <CardContent>
                     <Typography variant="h6" noWrap color="text.primary">
-                      {game.client_name}
+                      {Banner.client_name}
                     </Typography>
                     <Typography variant="body2" color="text.secondary" noWrap>
-                      {game.short_desc}
+                      {Banner.short_desc}
                     </Typography>
                   </CardContent>
 
@@ -328,20 +329,20 @@ function Game() {
                     <IconButton
                       color="primary"
                       sx={{ marginRight: '5px' }}
-                      onClick={() => handleViewgame(game._id)} // Open view modal
+                      onClick={() => handleViewBanner(Banner._id)} // Open view modal
                     >
                       <VisibilityIcon />
                     </IconButton>
                     <IconButton
                       color="primary"
                       sx={{ marginRight: '5px' }}
-                      onClick={() => handleOpenModal(game)} // Open edit modal
+                      onClick={() => handleOpenModal(Banner)} // Open edit modal
                     >
                       <EditIcon />
                     </IconButton>
                     <IconButton
                       color="primary"
-                      onClick={() => handleDeletegame(game._id)} // Delete game
+                      onClick={() => handleDeleteBanner(Banner._id)} // Delete Banner
                     >
                       <DeleteIcon />
                     </IconButton>
@@ -375,7 +376,7 @@ function Game() {
         </Snackbar>
 
 
-        {/* Modal for adding/editing game */}
+        {/* Modal for adding/editing Banner */}
         <Modal open={open} onClose={handleCloseModal} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
           <Box sx={{
             padding: '20px',
@@ -386,10 +387,10 @@ function Game() {
             height: '80vh',
             overflowY: 'scroll',
           }}>
-            <Typography variant="h6" gutterBottom>{editinggame ? 'Edit game' : 'Add game'}</Typography>
+            <Typography variant="h6" gutterBottom>{editingBanner ? 'Edit Banner' : 'Add Banner'}</Typography>
 
             <form onSubmit={handleSubmit}>
-              <TextField 
+              <TextField
                 label="Title"
                 variant="outlined"
                 fullWidth
@@ -494,7 +495,7 @@ function Game() {
           </Box>
         </Modal>
 
-        {/* Modal for Viewing game Details */}
+        {/* Modal for Viewing Banner Details */}
         <Modal
           open={viewingOpen}
           onClose={() => setViewingOpen(false)}
@@ -513,111 +514,63 @@ function Game() {
               boxShadow: 24,
             }}
           >
-            {viewinggame ? (
+            {viewingBanner ? (
               <>
                 {/* Title */}
                 <Typography variant="h4" color="text.primary" gutterBottom sx={{ fontWeight: 'bold' }}>
-                  {viewinggame.title}
+                  {viewingBanner.title}
                 </Typography>
 
                 {/* Client Name */}
                 <Typography variant="body1" color="text.secondary" gutterBottom>
-                  <strong>Client Name:</strong> <span style={{ color: '#f29c1e' }}>{viewinggame.client_name}</span>
-                </Typography>
-
-                {/* Trending */}
-                <Typography variant="body1" color="text.secondary" gutterBottom>
-                  <strong>Trending:</strong> <span style={{ color: '#f29c1e' }}>{viewinggame.trending ? 'Yes' : 'No'}</span>
+                  <strong>Client Name:</strong> <span style={{ color: '#f29c1e' }}>{viewingBanner.client_name}</span>
                 </Typography>
 
                 {/* Category */}
                 <Typography variant="body1" color="text.secondary" gutterBottom>
-                  <strong>Category:</strong> <span style={{ color: '#f29c1e' }}>{viewinggame.category}</span>
+                  <strong>Category:</strong> <span style={{ fontWeight: 'bold' }}>{viewingBanner.category}</span>
                 </Typography>
 
-                {/* Game Type */}
+                {/* Author */}
                 <Typography variant="body1" color="text.secondary" gutterBottom>
-                  <strong>Game Type:</strong> <span style={{ color: '#f29c1e' }}>{viewinggame.game_type}</span>
+                  <strong>Author:</strong> <span style={{ color: '#f29c1e' }}>{viewingBanner.author}</span>
                 </Typography>
 
                 {/* Short Description */}
                 <Typography variant="body1" color="text.secondary" gutterBottom>
-                  <strong>Short Description:</strong> <span style={{ color: '#f29c1e' }}>{viewinggame.short_desc}</span>
+                  <strong>Short Description:</strong><span style={{ color: '#f29c1e' }}> {viewingBanner.short_desc} </span>
                 </Typography>
 
-                {/* Description */}
+                {/* All Data */}
                 <Typography variant="body1" color="text.secondary" gutterBottom>
-                  <strong>Description:</strong> <span style={{ color: '#f29c1e' }}>{viewinggame.description}</span>
+                  <strong>All Data:</strong> <span style={{ color: '#f29c1e' }}>  {viewingBanner.all_data}</span>
                 </Typography>
 
                 {/* Meta Keywords */}
                 <Typography variant="body1" color="text.secondary" gutterBottom>
-                  <strong>Meta Keywords:</strong> <span style={{ color: '#f29c1e' }}>{viewinggame.meta_keyword.join(', ')}</span>
+                  <strong>Meta Keywords:</strong>  <span style={{ color: '#f29c1e' }}>  {viewingBanner.meta_keyword.join(', ')}</span>
                 </Typography>
 
                 {/* Campaign Link */}
                 <Typography variant="body1" color="text.secondary" gutterBottom>
                   <strong>Campaign Link:</strong>{' '}
-                  <a href={viewinggame.campaign_link} target="_blank" rel="noopener noreferrer" style={{ color: '#f29c1e' }}>
-                    {viewinggame.campaign_link}
+                  <a href={viewingBanner.campaign_link} target="_blank" rel="noopener noreferrer" style={{ color: '#f29c1e' }}>
+                    {viewingBanner.campaign_link}
                   </a>
                 </Typography>
 
-                {/* Banner */}
+                {/* Banner Image */}
                 <Box sx={{ marginBottom: '20px', borderRadius: '8px', overflow: 'hidden' }}>
                   <img
-                    src={viewinggame.banner}
-                    alt={viewinggame.title}
+                    src={viewingBanner.banner}
+                    alt={viewingBanner.title}
                     style={{ width: '100%', borderRadius: '8px', boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)' }}
                   />
                 </Box>
-
-                {/* Conditions */}
-                <Typography variant="body1" color="text.primary" gutterBottom>
-                  <strong>Conditions:</strong>
-                  <ul style={{ listStyleType: 'disc', paddingLeft: '20px' }}>
-                    {viewinggame.conditions.map((condition, index) => (
-                      <li key={index} style={{ marginBottom: '8px' }}>
-                        <Typography variant="body2" color="text.secondary">
-                          {condition}
-                        </Typography>
-                      </li>
-                    ))}
-                  </ul>
-                </Typography>
-
-                {/* Features */}
-                <Typography variant="body1" color="text.primary" gutterBottom>
-                  <strong>Features:</strong>
-                  <ul style={{ listStyleType: 'disc', paddingLeft: '20px' }}>
-                    {viewinggame.feature.map((feature, index) => (
-                      <li key={index} style={{ marginBottom: '8px' }}>
-                        <Typography variant="body2" color="text.secondary">
-                          {feature}
-                        </Typography>
-                      </li>
-                    ))}
-                  </ul>
-                </Typography>
-
-                {/* FAQs */}
-                <Typography variant="body1" color="text.primary" gutterBottom>
-                  <strong>FAQs:</strong>
-                  {viewinggame.faq.map((faq) => (
-                    <Box key={faq.id} sx={{ marginBottom: '12px' }}>
-                      <Typography variant="body2" color="text.primary" sx={{ fontWeight: 'bold' }}>
-                        Q: {faq.question}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        A: {faq.answer}
-                      </Typography>
-                    </Box>
-                  ))}
-                </Typography>
               </>
             ) : (
               <Typography variant="body1" color="text.secondary">
-                Loading game details...
+                Loading Banner details...
               </Typography>
             )}
 
@@ -642,11 +595,9 @@ function Game() {
           </Box>
         </Modal>
 
-
-
       </Box>
     </ThemeProvider>
   );
 }
 
-export default Game;
+export default Banner;

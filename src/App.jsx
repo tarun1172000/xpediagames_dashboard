@@ -1,37 +1,32 @@
 import React from "react";
-import { Box, CssBaseline, ThemeProvider, createTheme } from "@mui/material";
+import { Box, CssBaseline, ThemeProvider, createTheme, Drawer, AppBar, Toolbar, Typography, IconButton } from "@mui/material";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import LoginPage from "./components/LoginPage";
 import Header from "./components/Header"; // Import the Header component
 import Blog from "./components/Sidebar/Blog";
-import { Outlet } from "react-router-dom";
 import Game from "./components/Sidebar/Game";
 import Promo from "./components/Sidebar/Promo";
-import Brands from "./components/Sidebar/Brands";
-
-
-
+import MenuIcon from '@mui/icons-material/Menu';
+import { Outlet } from "react-router-dom";
+import Store from "./components/Sidebar/Store";
 const Layout = () => (
-  <>
-    <div className="">
-      <div className="row">
-        <div className="col-3">
-          <Sidebar />
-        </div>
-        <div className="col-9">
-          <div className="row ">
-            <div className="col-12">
-              <Header />
-            </div>
-            <div className="col-12">
-              <Outlet />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </>
+  <Box sx={{ display: "flex" }}>
+    <Sidebar />
+
+    <Box
+      component="main"
+      sx={{
+        flexGrow: 1,
+        bgcolor: "#121212",
+        height: "100vh",
+        overflow: "auto",
+      }}
+    >
+      <Header />
+      <Outlet />
+    </Box>
+  </Box>
 );
 
 const App = () => {
@@ -49,33 +44,23 @@ const App = () => {
   });
 
   return (
-    <ThemeProvider className={"container"} theme={theme}>
+    <ThemeProvider theme={theme}>
       <Router>
-        <Box className={"container"}>
-          <CssBaseline />
+        <CssBaseline />
+        {/* Define routes */}
+        <Routes>
+          {/* Route for login page */}
+          <Route path="/login" element={<LoginPage />} />
 
-          {/* Define routes */}
-          <Routes>
-            {/* Route for login page */}
-            <Route path="/login" element={<LoginPage />} />
-
-            {/* Route for dashboard with Sidebar and Header */}
-            <Route path="/" element={<Layout />}>
-              {/* Nested route for Blog */}
-              <Route path="/blog" element={<Blog />} />
-              <Route path="/game" element={<Game/>} />
-              <Route path="/promo" element={<Promo/>} />
-              <Route path="/Brands" element={<Brands/>} />
-
-             
-
-           
-
-
-
-            </Route>
-          </Routes>
-        </Box>
+          {/* Route for dashboard with Sidebar and Header */}
+          <Route path="/" element={<Layout />}>
+            {/* Nested route for Blog */}
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/game" element={<Game />} />
+            <Route path="/promo" element={<Promo />} />
+            <Route path="/store" element={<Store/>} />
+          </Route>
+        </Routes>
       </Router>
     </ThemeProvider>
   );

@@ -42,7 +42,7 @@ const Sidebar = () => {
     { text: "Blog", icon: <Article /> },
     { text: "Game", icon: <Gamepad /> },
     { text: "Promo", icon: <LocalOffer /> },
-    { text: "Brands", icon: <Storefront /> },
+    { text: "Store", icon: <Storefront /> },
     { text: "Test", icon: <Bookmark /> },
     { text: "Trending Game", icon: <TrendingUp /> },
     { text: "Users", icon: <Person /> }, // Using Material-UI Person icon for "Users"
@@ -80,8 +80,9 @@ const Sidebar = () => {
               width: 320,
               backgroundColor: darkModeBackground,
               color: theme.palette.text.primary,
-              borderRadius: "16px",
+              // borderRadius: "16px",
               padding: "16px",
+              
             },
           }}
           variant="permanent" // Make the drawer always open

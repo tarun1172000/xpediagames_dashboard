@@ -103,7 +103,7 @@ const Header = () => {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="sticky" sx={{ backgroundColor: 'black', color: 'black', width: '100%' }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
-          {/* Left Side: Menu & Search Bar */}
+          {/* Left Side: Menu */}
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <IconButton
               size="large"
@@ -115,35 +115,34 @@ const Header = () => {
             >
               <MenuIcon />
             </IconButton>
+          </Box>
 
-            {/* Search Bar */}
-            <Box sx={{ display: { xs: 'none', sm: 'flex' }, flexGrow: 1 }}>
-              <TextField
-                fullWidth
-                
-                variant="outlined"
-                placeholder="Search..."
-                value={searchTerm}
-                onChange={handleSearchChange}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Search sx={{ color: '#f29c1e' }} />
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{
-                  backgroundColor: 'black',
-                  '& .MuiOutlinedInput-root': {
-                    '& fieldset': {
-                      borderColor: '#f29c1e',
-                    },
+          {/* Center: Search Bar */}
+          <Box sx={{ display: 'flex', justifyContent: 'center', flexGrow: 1 }}>
+            <TextField
+              variant="outlined"
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={handleSearchChange}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search sx={{ color: '#f29c1e' }} />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{
+                backgroundColor: 'black',
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': {
+                    borderColor: '#f29c1e',
                   },
-                  color: '#fff',
-                  marginLeft: '40px',
-                }}
-              />
-            </Box>
+                },
+                color: '#fff',
+                width: '70%', // Enhance the width of the search bar
+                marginLeft: '40px',
+              }}
+            />
           </Box>
 
           {/* Right Side: Notifications & Profile */}
@@ -161,7 +160,7 @@ const Header = () => {
             </IconButton>
 
             <IconButton color="inherit" onClick={handleProfileMenuOpen}>
-              <Avatar sx={{ bgcolor: '#f29c1e'  }}>S</Avatar>
+              <Avatar sx={{ bgcolor: '#f29c1e' }}>S</Avatar>
             </IconButton>
           </Box>
         </Toolbar>
