@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Box, TextField, Button, Typography, Grid, Paper, IconButton, Snackbar } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, TextField, Button, Typography, Grid, Paper, IconButton, Snackbar, Checkbox, FormControlLabel } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { Lock } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -14,6 +14,7 @@ const LoginPage = () => {
   const [role, setRole] = useState('');
   const [error, setError] = useState('');
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const customColor = '#f29c1e';
   const hoverColor = '#632600';
@@ -31,7 +32,6 @@ const LoginPage = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.REACT_APP_API_KEY}`, // if you need to send a bearer token, adjust accordingly
         },
         body: JSON.stringify({
           email,
@@ -44,6 +44,17 @@ const LoginPage = () => {
       if (response.ok) {
         // Save the access_token to localStorage
         localStorage.setItem('access_token', data.access_token);
+        localStorage.setItem('userEmail', email);
+
+        // Optionally remember the credentials if 'Remember Me' is checked
+        if (rememberMe) {
+          localStorage.setItem('rememberEmail', email);
+          localStorage.setItem('rememberPassword', password);  // This is optional, use cautiously
+        } else {
+          localStorage.removeItem('rememberEmail');
+          localStorage.removeItem('rememberPassword');
+        }
+
         // Navigate to dashboard after successful login
         navigate('/Blog');
       } else {
@@ -56,6 +67,18 @@ const LoginPage = () => {
       setOpenSnackbar(true);
     }
   };
+
+  // Load saved email and password (if 'Remember Me' was selected)
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('rememberEmail');
+    const savedPassword = localStorage.getItem('rememberPassword');
+    
+    if (savedEmail) {
+      setEmail(savedEmail);
+      setPassword(savedPassword);
+      setRememberMe(true);
+    }
+  }, []);
 
   // Reusable style for form buttons
   const buttonStyles = {
@@ -137,6 +160,20 @@ const LoginPage = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+              />
+            </Grid>
+
+            {/* Remember Me Checkbox */}
+            <Grid item xs={12}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    color="primary"
+                  />
+                }
+                label="Remember Me"
               />
             </Grid>
 

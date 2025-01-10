@@ -50,17 +50,11 @@ function Banner() {
   const [open, setOpen] = useState(false); // State to control Modal visibility
   const [editingBanner, setEditingBanner] = useState(null); // Banner being edited
   const [formData, setFormData] = useState({
-    title: '',
-    client_name: '',
-    short_desc: '',
-    category: '',
-    author: '',
-    all_data: '',
-    banner: '',
-    campaign_link: '',
-    meta_keyword: '',
-    post_data: false,
-    trending: false,
+   
+    store_name: '',
+    store_link : '',
+    banner_img: '',
+   
   });
 
   const [loading, setLoading] = useState(false); // Loading state for the PUT request
@@ -93,17 +87,11 @@ function Banner() {
   const handleOpenModal = (Banner) => {
     setEditingBanner(Banner);
     setFormData({
-      title: Banner.title,
-      client_name: Banner.client_name,
-      short_desc: Banner.short_desc,
-      category: Banner.category,
-      author: Banner.author,
-      all_data: Banner.all_data,
-      banner: Banner.banner,
-      campaign_link: Banner.campaign_link,
-      meta_keyword: Banner.meta_keyword.join(', '),
-      post_data: Banner.post_data,
-      trending: Banner.trending,
+      
+      store_name: Banner.store_name,
+      store_link : Banner.store_link ,
+      banner_img: Banner.banner_img,
+      
     });
     setOpen(true);
   };
@@ -140,7 +128,7 @@ function Banner() {
     try {
       const token = localStorage.getItem('access_token');
 
-      const response = await fetch(`http://api.xpediagames.com/api/Banner/${editingBanner._id}`, {
+      const response = await fetch(`http://api.xpediagames.com/api/banner/${editingBanner._id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -183,7 +171,7 @@ function Banner() {
 
       const token = localStorage.getItem('access_token');
 
-      const response = await fetch(`http://api.xpediagames.com/api/Banner/${id}`, {
+      const response = await fetch(`http://api.xpediagames.com/api/banner/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -306,13 +294,10 @@ function Banner() {
                     },
                   }}
                 >
-                  <CardMedia component="img" height="200" image={Banner.banner} alt={Banner.title} />
+                  <CardMedia component="img" height="200" image={Banner.banner_img} alt={Banner.store_name} />
                   <CardContent>
                     <Typography variant="h6" noWrap color="text.primary">
-                      {Banner.client_name}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" noWrap>
-                      {Banner.short_desc}
+                      {Banner.store_name}
                     </Typography>
                   </CardContent>
 

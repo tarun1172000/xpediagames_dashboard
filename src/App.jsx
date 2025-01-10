@@ -10,6 +10,9 @@ import Promo from "./components/Sidebar/Promo";
 import MenuIcon from '@mui/icons-material/Menu';
 import { Outlet } from "react-router-dom";
 import Store from "./components/Sidebar/Store";
+import Banner from "./components/Sidebar/Banner";
+import User from "./components/Sidebar/User"
+import TrendingGame from "./components/Sidebar/TrendingGame";
 const Layout = () => (
   <Box sx={{ display: "flex" }}>
     <Sidebar />
@@ -55,10 +58,14 @@ const App = () => {
           {/* Route for dashboard with Sidebar and Header */}
           <Route path="/" element={<Layout />}>
             {/* Nested route for Blog */}
+
+            <Route path="/banner" element={<Banner />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/game" element={<Game />} />
             <Route path="/promo" element={<Promo />} />
             <Route path="/store" element={<Store/>} />
+            <Route path="/user" element={<User/>} />
+            <Route path="/trendinggame" element={<TrendingGame/>} />
           </Route>
         </Routes>
       </Router>

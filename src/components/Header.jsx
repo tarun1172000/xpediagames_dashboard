@@ -1,13 +1,24 @@
-import React, { useState } from 'react';
-import { AppBar, Toolbar, IconButton, TextField, InputAdornment, Menu, MenuItem, Box, Avatar, Badge } from '@mui/material';
-import { Search, Notifications, AccountCircle, ExitToApp, Menu as MenuIcon, Mail as MailIcon } from '@mui/icons-material';
+import React, { useState, useEffect } from 'react';
+import { AppBar, Toolbar, IconButton, TextField, InputAdornment, Menu, MenuItem, Box, Avatar, Badge, Typography, Divider } from '@mui/material';
+import { Search, Notifications, Menu as MenuIcon, Mail as MailIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMenuAnchorEl, setMobileMenuAnchorEl] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+  const [userInitial, setUserInitial] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Retrieve the user's email from localStorage
+    const email = localStorage.getItem('userEmail');
+    if (email) {
+      setUserEmail(email);
+      setUserInitial(email.charAt(0).toUpperCase()); // Initial from email
+    }
+  }, []);
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -23,38 +34,37 @@ const Header = () => {
   };
 
   const handleSignOut = () => {
-    // Handle sign-out logic (e.g., clearing tokens, redirecting to login)
-    console.log('Sign out');
-    navigate('/login'); // Redirect to login page after sign-out
+    localStorage.removeItem('accessToken'); // Remove access token
+    localStorage.removeItem('userEmail'); // Optionally remove the email
+    navigate('/login'); // Redirect to login page
   };
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
 
-  const menuId = 'profile-menu';
-  const mobileMenuId = 'mobile-menu';
-
-  // Profile Menu
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
       open={Boolean(anchorEl)}
       onClose={handleMenuClose}
-      anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      sx={{
+        '& .MuiMenu-paper': {
+          backgroundColor: 'black', 
+          borderRadius: '8px',
+          width: '220px',
+          border: "2px solid #f29c1e "
+        },
       }}
     >
-      <MenuItem onClick={() => { handleMenuClose(); navigate('/profile'); }}>
-        <AccountCircle sx={{ marginRight: 1 }} /> Profile
+      <MenuItem sx={{ textAlign: 'center', color: '#f29c1e' }}>
+        {userEmail}
       </MenuItem>
-      <MenuItem onClick={handleSignOut}>
-        <ExitToApp sx={{ marginRight: 1 }} /> Sign Out
+      <Divider sx={{ my: 1, backgroundColor: '#f29c1e' }} />
+      <MenuItem onClick={handleSignOut} sx={{ color: '#f29c1e' }} >
+        Log Out
       </MenuItem>
     </Menu>
   );
@@ -65,14 +75,8 @@ const Header = () => {
       anchorEl={mobileMenuAnchorEl}
       open={Boolean(mobileMenuAnchorEl)}
       onClose={handleMenuClose}
-      anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
     >
       <MenuItem>
         <IconButton size="large" aria-label="show 4 new mails" color="inherit">
@@ -85,16 +89,10 @@ const Header = () => {
       <MenuItem>
         <IconButton size="large" aria-label="show 17 new notifications" color="inherit">
           <Badge badgeContent={17} color="error">
-            <Notifications sx={{ color: '#f29c1e' }} />
+            <Notifications />
           </Badge>
         </IconButton>
         <p>Notifications</p>
-      </MenuItem>
-      <MenuItem onClick={handleProfileMenuOpen}>
-        <IconButton size="large" aria-label="account of current user" color="inherit">
-          <AccountCircle />
-        </IconButton>
-        <p>Profile</p>
       </MenuItem>
     </Menu>
   );
@@ -139,7 +137,7 @@ const Header = () => {
                   },
                 },
                 color: '#fff',
-                width: '70%', // Enhance the width of the search bar
+                width: '70%',
                 marginLeft: '40px',
               }}
             />
@@ -159,9 +157,13 @@ const Header = () => {
               </Badge>
             </IconButton>
 
-            <IconButton color="inherit" onClick={handleProfileMenuOpen}>
-              <Avatar sx={{ bgcolor: '#f29c1e' }}>S</Avatar>
-            </IconButton>
+            {/* Avatar and Email for Profile */}
+            <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={handleProfileMenuOpen}>
+              <Avatar sx={{ bgcolor: '#f29c1e', marginRight: 1 }}>
+                {userInitial || 'U'}
+              </Avatar>
+
+            </Box>
           </Box>
         </Toolbar>
       </AppBar>
