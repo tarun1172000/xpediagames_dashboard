@@ -34,9 +34,9 @@ const Header = () => {
   };
 
   const handleSignOut = () => {
-    localStorage.removeItem('accessToken'); // Remove access token
-    localStorage.removeItem('userEmail'); // Optionally remove the email
-    navigate('/login'); // Redirect to login page
+    localStorage.removeItem('access_token'); 
+    localStorage.removeItem('userEmail'); 
+    navigate('/login'); 
   };
 
   const handleSearchChange = (event) => {

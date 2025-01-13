@@ -1,0 +1,186 @@
+import React, { useState } from 'react';
+import { Box, Typography, Button, Modal, CircularProgress, Snackbar, Alert } from '@mui/material';
+import { CloudUpload as CloudUploadIcon } from '@mui/icons-material';
+import { useDropzone } from 'react-dropzone';  // Importing react-dropzone for drag and drop
+
+function Banner() {
+  const [uploadModalOpen, setUploadModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [file, setFile] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success'); // 'success', 'error'
+
+  const { getRootProps, getInputProps } = useDropzone({
+    accept: '.xls,.xlsx',
+    onDrop: (acceptedFiles) => {
+      setFile(acceptedFiles[0]);
+    }
+  });
+
+  const handleFileUpload = async () => {
+    if (!file) {
+      setSnackbarMessage('Please select a file to upload!');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // Simulating file upload request here
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('http://api.xpediagames.com/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (response.ok) {
+        setSnackbarMessage('Excel file uploaded successfully!');
+        setSnackbarSeverity('success');
+        setSnackbarOpen(true);
+      } else {
+        setSnackbarMessage('Failed to upload file.');
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
+      }
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      setSnackbarMessage('Error uploading file.');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUploadExcelOpen = () => {
+    setUploadModalOpen(true);
+  };
+
+  const handleUploadExcelClose = () => {
+    setUploadModalOpen(false);
+  };
+
+  return (
+    <div>
+      <Box sx={{
+        padding: '20px',
+        backgroundColor: 'background.default',
+        borderRadius: '8px',
+        border: '1px solid #f29c1e',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        textAlign: 'center',
+      }}>
+        <Typography variant="h5" color="text.primary" sx={{ marginBottom: '15px' }}>
+          Upload Your Excel File
+        </Typography>
+
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleUploadExcelOpen}
+          sx={{
+            padding: '12px 25px',
+            fontSize: '16px',
+            borderRadius: '8px',
+            boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.3)',
+            '&:hover': {
+              backgroundColor: '#f2a800',
+              boxShadow: '0px 6px 10px rgba(0, 0, 0, 0.4)',
+            },
+            marginBottom: '20px',
+          }}
+        >
+          Upload Excel
+        </Button>
+      </Box>
+
+      {/* Modal for Upload Excel */}
+      <Modal open={uploadModalOpen} onClose={handleUploadExcelClose} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Box sx={{
+          padding: '20px',
+          backgroundColor: 'background.default',
+          borderRadius: '8px',
+          width: '400px',
+          border: '1px solid #f29c1e',
+          textAlign: 'center',
+        }}>
+          <Typography variant="h6" color="text.primary" gutterBottom>
+            Upload Excel File
+          </Typography>
+
+          <Box
+            {...getRootProps()}
+            sx={{
+              border: '2px dashed #f29c1e',
+              padding: '30px',
+              cursor: 'pointer',
+              borderRadius: '8px',
+              marginBottom: '20px',
+              backgroundColor: '#1c0c02',
+              color: '#f48d4c',
+            }}
+          >
+            <input {...getInputProps()} />
+            <CloudUploadIcon sx={{ fontSize: '48px' }} />
+            <Typography variant="body1" color="text.secondary">
+              Drag & Drop your Excel file here, or click to select one.
+            </Typography>
+          </Box>
+
+          {file && (
+            <Typography variant="body2" color="text.secondary" sx={{ marginBottom: '20px' }}>
+              <strong>Selected File: </strong>{file.name}
+            </Typography>
+          )}
+
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleFileUpload}
+            disabled={loading}
+            sx={{
+              padding: '12px 25px',
+              fontSize: '16px',
+              borderRadius: '8px',
+              backgroundColor: '#f29c1e',
+              '&:hover': {
+                backgroundColor: '#d17a1e',
+              },
+            }}
+          >
+            {loading ? <CircularProgress size={24} /> : 'Upload File'}
+          </Button>
+
+          {/* Snackbar for success or error messages */}
+          <Snackbar
+            open={snackbarOpen}
+            autoHideDuration={6000}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            onClose={() => setSnackbarOpen(false)}
+          >
+            <Alert
+              onClose={() => setSnackbarOpen(false)}
+              severity={snackbarSeverity}
+              sx={{
+                width: '100%',
+                backgroundColor: 'black',
+                border: '1px solid #f29c1e',
+              }}
+            >
+              {snackbarMessage}
+            </Alert>
+          </Snackbar>
+        </Box>
+      </Modal>
+    </div>
+  );
+}
+
+export default Banner;

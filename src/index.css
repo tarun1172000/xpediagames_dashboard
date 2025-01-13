@@ -21,3 +21,7 @@ code {
 .sidebarlinks{
   text-decoration: none;
 }
+.ql-container{
+
+  height: 92% !important;
+}

@@ -16,9 +16,11 @@ import {
   Snackbar,
   Alert,
 } from '@mui/material';
+import ReactQuill from 'react-quill'; // Import ReactQuill
+import 'react-quill/dist/quill.snow.css'; // Import Quill styles
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { Edit as EditIcon, Delete as DeleteIcon, Visibility as VisibilityIcon } from '@mui/icons-material';
-
+import { Link } from 'react-router-dom';
 // Define the dark theme
 const theme = createTheme({
   palette: {
@@ -139,6 +141,7 @@ function Blog() {
 
     try {
       const token = localStorage.getItem('access_token');
+      console.log("PUT ", token)
 
       const response = await fetch(`http://api.xpediagames.com/api/blog/${editingBlog._id}`, {
         method: 'PUT',
@@ -262,7 +265,9 @@ function Blog() {
               },
             }}
           >
-            Add New Blog
+            <Link to="/addBlog" style={{ color: 'black', textDecoration: 'none' }}>
+              Add New Blog
+            </Link>
           </Button>
           <Button
             variant="contained"
@@ -435,15 +440,8 @@ function Blog() {
                 value={formData.author}
                 onChange={handleInputChange}
               />
-              <TextField
-                label="All Data"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                name="all_data"
-                value={formData.all_data}
-                onChange={handleInputChange}
-              />
+            
+
               <TextField
                 label="Banner URL"
                 variant="outlined"
@@ -470,6 +468,32 @@ function Blog() {
                 name="meta_keyword"
                 value={formData.meta_keyword}
                 onChange={handleInputChange}
+              />
+                <ReactQuill
+                value={formData.all_data}
+                onChange={(value) => setFormData({ ...formData, all_data: value })}
+                modules={{
+                  toolbar: [
+                    [{ 'header': '1' }, { 'header': '2' }, { 'font': [] }],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                    ['bold', 'italic', 'underline'],
+                    ['link'],
+                    [{ 'align': [] }],
+                    ['image'],
+                    ['blockquote'],
+                    [{ 'direction': 'rtl' }],
+                  ],
+                }}
+                theme="snow"
+                placeholder="Enter detailed blog content here..."
+                style={{
+                  backgroundColor: 'white',
+                  height: "500px", // Adjust the height as needed
+                  color: 'black',
+                  borderRadius: '8px',
+                  padding: '10px',
+                  paddingBottom:"40px"
+                }}
               />
               <FormControlLabel
                 control={<Checkbox checked={formData.post_data} onChange={handleCheckboxChange} name="post_data" />}
