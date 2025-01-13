@@ -21,8 +21,8 @@
     "xlsx": "^0.18.5"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "react-scripts start --port 9018",
+    "build": "react-scripts build --port 9018",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

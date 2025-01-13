@@ -40,6 +40,7 @@ const LoginPage = () => {
       });
 
       const data = await response.json();
+      console.log(data)
 
       if (response.ok) {
         // Save the access_token to localStorage
@@ -56,7 +57,7 @@ const LoginPage = () => {
         }
 
         // Navigate to dashboard after successful login
-        navigate('/Blog');
+        navigate('/blog');
       } else {
         // Handle API errors (e.g. invalid login)
         setError(data.message || 'Login failed');
