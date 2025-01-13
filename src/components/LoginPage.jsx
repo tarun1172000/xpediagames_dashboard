@@ -132,7 +132,7 @@ const LoginPage = () => {
             <Lock />
           </IconButton>
           <Typography variant="h5" sx={{ color: customColor }}>
-            Login
+            LoginKiJay
           </Typography>
         </Box>
 
