@@ -18,23 +18,24 @@ import {
   Article,
 } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom"; 
 
-// Import the xpedia.png image
-import xpediaImage from "../assets/xpedia.png"; // Update the path according to your project structure
+
+import xpediaImage from "../assets/xpedia.png"; 
 
 const Sidebar = () => {
   const theme = useTheme();
-  const [activePage, setActivePage] = useState(""); // State to track active page
+  const location = useLocation(); 
+  const [activePage, setActivePage] = useState(location.pathname); 
 
   const menuItems = [
-    { text: "Banner", icon: <Home /> },
-    { text: "Blog", icon: <Article /> },
-    { text: "Game", icon: <Gamepad /> },
-    { text: "Promo", icon: <LocalOffer /> },
-    { text: "Store", icon: <Storefront /> },
-    { text: "TrendingGame", icon: <TrendingUp /> },
-    { text: "User", icon: <Person /> },
+    { text: "Banner", path: "/banner", icon: <Home /> },
+    { text: "Blog", path: "/blog", icon: <Article /> },
+    { text: "Game", path: "/game", icon: <Gamepad /> },
+    { text: "Promo", path: "/promo", icon: <LocalOffer /> },
+    { text: "Store", path: "/store", icon: <Storefront /> },
+    { text: "TrendingGame", path: "/trendinggame", icon: <TrendingUp /> },
+    { text: "User", path: "/user", icon: <Person /> },
   ];
 
   const customColor = "#f48d4c"; // Base color
@@ -44,7 +45,7 @@ const Sidebar = () => {
   return (
     <Drawer
       sx={{
-        width: 320, 
+        width: 320,
         flexShrink: 0,
         "& .MuiDrawer-paper": {
           width: 320,
@@ -71,103 +72,103 @@ const Sidebar = () => {
         />
       </Box>
 
-      {/* Content with Margin Top */}
+     
       <Box sx={{ mt: 2 }}>
-        {/* Menu Items */}
+      
         <List>
-  {menuItems.slice(0, 6).map((item, index) => (
-    <NavLink
-      key={index}
-      to={item.text}
-      className="sidebarlinks"
-      onClick={() => setActivePage(item.text)} // Set active page on click
-      style={{
-        textDecoration: "none", // Remove default link styling
-        width: "100%",
-      }}
-    >
-      <ListItem
-        button
-        sx={{
-          padding: "12px 16px",
-          borderRadius: "8px",
-          backgroundColor:
-            activePage === item.text ? hoverColor : "transparent", // Highlight active page
-          "&:hover": {
-            backgroundColor: hoverColor, // Hover effect when not active
-          },
-        }}
-      >
-        <ListItemIcon
-          sx={{
-            color: customColor,
-            "&:hover": {
-              color: "black",
-            },
-          }}
-        >
-          {item.icon}
-        </ListItemIcon>
-        <ListItemText
-          primary={item.text}
-          sx={{
-            color: customColor,
-            "&:hover": {
-              color: "black", // Text hover effect
-            },
-          }}
-        />
-      </ListItem>
-    </NavLink>
-  ))}
+          {menuItems.slice(0, 6).map((item, index) => (
+            <NavLink
+              key={index}
+              to={item.path}
+              className="sidebarlinks"
+              onClick={() => setActivePage(item.path)} // Set active page on click
+              style={{
+                textDecoration: "none", // Remove default link styling
+                width: "100%",
+              }}
+            >
+              <ListItem
+                button
+                sx={{
+                  padding: "12px 16px",
+                  borderRadius: "8px",
+                  backgroundColor:
+                    activePage === item.path ? hoverColor : "transparent", // Highlight active page
+                  "&:hover": {
+                    backgroundColor: hoverColor, // Hover effect when not active
+                  },
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    color: customColor,
+                    "&:hover": {
+                      color: "black",
+                    },
+                  }}
+                >
+                  {item.icon}
+                </ListItemIcon>
+                <ListItemText
+                  primary={item.text}
+                  sx={{
+                    color: customColor,
+                    "&:hover": {
+                      color: "black", // Text hover effect
+                    },
+                  }}
+                />
+              </ListItem>
+            </NavLink>
+          ))}
 
-  {/* Divider above the "User" item */}
-  <Divider sx={{ borderColor: customColor , marginBottom : "5px"}} />
+          {/* Divider above the "User" item */}
+          <Divider sx={{ borderColor: customColor, marginBottom: "5px" }} />
 
-  <NavLink
-    key={6}
-    to={menuItems[6].text}
-    className="sidebarlinks"
-    onClick={() => setActivePage(menuItems[6].text)}
-    style={{
-      textDecoration: "none",
-      width: "100%",
-    }}
-  >
-    <ListItem
-      button
-      sx={{
-        padding: "12px 16px",
-        borderRadius: "8px",
-        backgroundColor:
-          activePage === menuItems[6].text ? hoverColor : "transparent", // Highlight active page
-        "&:hover": {
-          backgroundColor: hoverColor, // Hover effect when not active
-        },
-      }}
-    >
-      <ListItemIcon
-        sx={{
-          color: customColor,
-          "&:hover": {
-            color: "black",
-          },
-        }}
-      >
-        {menuItems[6].icon}
-      </ListItemIcon>
-      <ListItemText
-        primary={menuItems[6].text}
-        sx={{
-          color: customColor,
-          "&:hover": {
-            color: "black", // Text hover effect
-          },
-        }}
-      />
-    </ListItem>
-  </NavLink>
-</List>
+          <NavLink
+            key={6}
+            to={menuItems[6].path}
+            className="sidebarlinks"
+            onClick={() => setActivePage(menuItems[6].path)}
+            style={{
+              textDecoration: "none",
+              width: "100%",
+            }}
+          >
+            <ListItem
+              button
+              sx={{
+                padding: "12px 16px",
+                borderRadius: "8px",
+                backgroundColor:
+                  activePage === menuItems[6].path ? hoverColor : "transparent", // Highlight active page
+                "&:hover": {
+                  backgroundColor: hoverColor, // Hover effect when not active
+                },
+              }}
+            >
+              <ListItemIcon
+                sx={{
+                  color: customColor,
+                  "&:hover": {
+                    color: "black",
+                  },
+                }}
+              >
+                {menuItems[6].icon}
+              </ListItemIcon>
+              <ListItemText
+                primary={menuItems[6].text}
+                sx={{
+                  color: customColor,
+                  "&:hover": {
+                    color: "black", // Text hover effect
+                  },
+                }}
+              />
+            </ListItem>
+          </NavLink>
+        </List>
 
         <Divider sx={{ borderColor: customColor }} />
       </Box>

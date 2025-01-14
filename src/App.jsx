@@ -3,22 +3,32 @@ import { Box, CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"; // Import Navigate for redirection
 import Sidebar from "./components/Sidebar";
 import LoginPage from "./components/LoginPage";
-import Header from "./components/Header"; // Import the Header component
+import Header from "./components/Header";
 import Blog from "./components/Blog/Blog";
 import Game from "./components/Sidebar/Game";
 import Promo from "./components/Sidebar/Promo";
-import MenuIcon from '@mui/icons-material/Menu';
 import { Outlet } from "react-router-dom";
 import Store from "./components/Sidebar/Store";
 import Banner from "./components/Sidebar/Banner";
-import User from "./components/Sidebar/User"
+import User from "./components/Sidebar/User";
 import TrendingGame from "./components/Sidebar/TrendingGame";
-import AddBlog from "./components/Blog/AddBlog"; 
+import AddBlog from "./components/Blog/AddBlog";
+
+// PrivateRoute component to handle access control
+const PrivateRoute = ({ element }) => {
+  const accessToken = localStorage.getItem('access_token');
+  
+  if (!accessToken) {
+    return <Navigate to="/login" replace />; // Redirect to /login if no access token
+  }
+
+  return element;
+};
 
 const Layout = () => (
   <Box sx={{ display: "flex" }}>
     <Sidebar />
-    <Box
+    <Box 
       component="main"
       sx={{
         flexGrow: 1,
@@ -47,25 +57,29 @@ const App = () => {
     },
   });
 
-  const isAuthenticated = !!localStorage.getItem('access_token');
-
   return (
     <ThemeProvider theme={theme}>
       <Router>
         <CssBaseline />
         <Routes>
+          {/* Login page route */}
           <Route path="/login" element={<LoginPage />} />
 
-          <Route path="/" element={isAuthenticated ? <Layout /> : <Navigate to="/login" />}>
-            <Route path="/banner" element={<Banner />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/game" element={<Game />} />
-            <Route path="/promo" element={<Promo />} />
-            <Route path="/store" element={<Store />} />
-            <Route path="/user" element={<User />} />
-            <Route path="/trendinggame" element={<TrendingGame />} />
-            <Route path="/addBlog" element={<AddBlog />} />
+          {/* Protecting routes with PrivateRoute */}
+          <Route path="/" element={<Layout />}>
+            <Route path="/" element={<PrivateRoute element={<Blog />} />} /> {/* Home route */}
+            <Route path="/banner" element={<PrivateRoute element={<Banner />} />} />
+            <Route path="/blog" element={<PrivateRoute element={<Blog />} />} />
+            <Route path="/game" element={<PrivateRoute element={<Game />} />} />
+            <Route path="/promo" element={<PrivateRoute element={<Promo />} />} />
+            <Route path="/store" element={<PrivateRoute element={<Store />} />} />
+            <Route path="/user" element={<PrivateRoute element={<User />} />} />
+            <Route path="/trendinggame" element={<PrivateRoute element={<TrendingGame />} />} />
+            <Route path="/addBlog" element={<PrivateRoute element={<AddBlog />} />} />
           </Route>
+
+          {/* Redirect undefined routes to login page */}
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>
     </ThemeProvider>
