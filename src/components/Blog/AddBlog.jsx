@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box, CircularProgress, Snackbar, Alert, FormControlLabel, Checkbox, Typography } from '@mui/material'; // Fixed imports
+import { TextField, Button, Box, CircularProgress, Snackbar, Alert, FormControlLabel, Checkbox, Typography, Grid, Paper } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import ReactQuill from 'react-quill'; // Import ReactQuill
 import 'react-quill/dist/quill.snow.css'; // Import Quill styles
@@ -95,8 +95,6 @@ function AddBlog() {
 
     try {
       const token = localStorage.getItem('access_token');
-      console.log("cgjscvd", token);
-
       const response = await fetch('http://api.xpediagames.com/api/blog', {
         method: 'POST',
         headers: {
@@ -126,31 +124,40 @@ function AddBlog() {
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ padding: '20px', maxWidth: '1000px', margin: 'auto' }}>
-        <Typography variant="h4" gutterBottom color="text.primary" sx={{ fontWeight: 'bold' }}>
+        <Typography variant="h4" gutterBottom color="text.primary" sx={{ fontWeight: 'bold', textAlign: 'center' }}>
           Add New Blog
         </Typography>
 
         <form onSubmit={handleSubmit}>
-          <TextField
-            label="Title"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            name="title"
-            value={formData.title}
-            onChange={handleInputChange}
-            sx={{ backgroundColor: '#2a2a2a', borderRadius: '8px' }}
-          />
-          <TextField
-            label="Client Name"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            name="client_name"
-            value={formData.client_name}
-            onChange={handleInputChange}
-            sx={{ backgroundColor: '#2a2a2a', borderRadius: '8px' }}
-          />
+          {/* Grid layout for Title and Client Name */}
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Title"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                name="title"
+                value={formData.title}
+                onChange={handleInputChange}
+                sx={{ backgroundColor: '#2a2a2a', borderRadius: '8px' }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Client Name"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                name="client_name"
+                value={formData.client_name}
+                onChange={handleInputChange}
+                sx={{ backgroundColor: '#2a2a2a', borderRadius: '8px' }}
+              />
+            </Grid>
+          </Grid>
+
+          {/* Other form fields */}
           <TextField
             label="Short Description"
             variant="outlined"
@@ -181,9 +188,6 @@ function AddBlog() {
             onChange={handleInputChange}
             sx={{ backgroundColor: '#2a2a2a', borderRadius: '8px' }}
           />
-          
-        
-
           <TextField
             label="Banner URL"
             variant="outlined"
@@ -214,14 +218,15 @@ function AddBlog() {
             onChange={handleInputChange}
             sx={{ backgroundColor: '#2a2a2a', borderRadius: '8px' }}
           />
-            {/* Rich Text Editor for All Data */}
-            <ReactQuill
+
+          {/* Rich Text Editor for All Data */}
+          <ReactQuill
             value={formData.all_data}
             onChange={handleEditorChange}
             modules={{
               toolbar: [
-                [{ 'header': '1'}, { 'header': '2'}, { 'font': [] }],
-                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                [{ 'header': '1' }, { 'header': '2' }, { 'font': [] }],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
                 ['bold', 'italic', 'underline'],
                 ['link'],
                 [{ 'align': [] }],
@@ -234,12 +239,14 @@ function AddBlog() {
             placeholder="Enter detailed blog content here..."
             style={{
               backgroundColor: 'white',
-              height : "500px",
+              height: '500px',
               color: 'black',
               borderRadius: '8px',
               padding: '10px',
             }}
           />
+
+          {/* Checkbox for Post Data and Trending */}
           <FormControlLabel
             control={<Checkbox checked={formData.post_data} onChange={handleCheckboxChange} name="post_data" />}
             label="Post Data"
@@ -251,7 +258,8 @@ function AddBlog() {
             sx={{ color: 'text.primary' }}
           />
 
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
+          {/* Submit Button */}
+          <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
             <Button
               variant="contained"
               color="primary"
@@ -261,7 +269,6 @@ function AddBlog() {
                 padding: '12px 25px',
                 fontSize: '16px',
                 borderRadius: '8px',
-                marginRight: '12px',
                 boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.3)',
                 '&:hover': {
                   backgroundColor: '#f2a800',

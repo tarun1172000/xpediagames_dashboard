@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, TextField, Button, Typography, Grid, Paper, IconButton, Snackbar, Checkbox, FormControlLabel } from '@mui/material';
+import { Box, TextField, Button, Typography, Grid, Paper, IconButton, Snackbar, Checkbox, FormControlLabel, CircularProgress } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { Lock } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -15,6 +15,7 @@ const LoginPage = () => {
   const [error, setError] = useState('');
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [loading, setLoading] = useState(false); // Add loading state
 
   const customColor = '#f29c1e';
   const hoverColor = '#632600';
@@ -23,9 +24,10 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    // Reset error state
+    // Reset error state and show loading spinner
     setError('');
     setOpenSnackbar(false);
+    setLoading(true); // Set loading to true when the login starts
 
     try {
       const response = await fetch('http://api.xpediagames.com/api/login', {
@@ -57,7 +59,7 @@ const LoginPage = () => {
         }
 
         // Navigate to dashboard after successful login
-        navigate('/Blog');
+        navigate('/Blog', { replace: true });
       } else {
         // Handle API errors (e.g. invalid login)
         setError(data.message || 'Login failed');
@@ -66,13 +68,15 @@ const LoginPage = () => {
     } catch (err) {
       setError('An error occurred. Please try again.');
       setOpenSnackbar(true);
+    } finally {
+      setLoading(false); // Set loading to false when the process is done
     }
   };
 
   useEffect(() => {
     const savedEmail = localStorage.getItem('rememberEmail');
     const savedPassword = localStorage.getItem('rememberPassword');
-    
+
     if (savedEmail) {
       setEmail(savedEmail);
       setPassword(savedPassword);
@@ -170,7 +174,14 @@ const LoginPage = () => {
                   <Checkbox
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
-                    color="primary"
+                    sx={{
+                      '&.Mui-checked': {
+                        color: '#f29c1e', // Set checkbox color when checked
+                      },
+                      '&.MuiCheckbox-root': {
+                        color: '#f29c1e', // Set checkbox color when unchecked
+                      },
+                    }}
                   />
                 }
                 label="Remember Me"
@@ -185,8 +196,13 @@ const LoginPage = () => {
                 color="primary"
                 type="submit"
                 sx={buttonStyles}
+                disabled={loading} // Disable the button while loading
               >
-                Login
+                {loading ? (
+                  <CircularProgress size={24} sx={{ color: 'white' }} /> // Show loading spinner
+                ) : (
+                  'Login'
+                )}
               </Button>
             </Grid>
           </Grid>

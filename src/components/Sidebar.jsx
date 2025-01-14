@@ -44,7 +44,7 @@ const Sidebar = () => {
   return (
     <Drawer
       sx={{
-        width: 320,
+        width: 320, 
         flexShrink: 0,
         "& .MuiDrawer-paper": {
           width: 320,
