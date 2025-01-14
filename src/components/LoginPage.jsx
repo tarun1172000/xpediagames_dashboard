@@ -57,7 +57,7 @@ const LoginPage = () => {
         }
 
         // Navigate to dashboard after successful login
-        navigate('/blog');
+        navigate('/Blog');
       } else {
         // Handle API errors (e.g. invalid login)
         setError(data.message || 'Login failed');
@@ -69,7 +69,6 @@ const LoginPage = () => {
     }
   };
 
-  // Load saved email and password (if 'Remember Me' was selected)
   useEffect(() => {
     const savedEmail = localStorage.getItem('rememberEmail');
     const savedPassword = localStorage.getItem('rememberPassword');
@@ -132,7 +131,7 @@ const LoginPage = () => {
             <Lock />
           </IconButton>
           <Typography variant="h5" sx={{ color: customColor }}>
-            LoginKiJay
+            Login
           </Typography>
         </Box>
 
