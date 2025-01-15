@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box, CircularProgress, Snackbar, Alert, FormControlLabel, Checkbox, Typography, Grid, Paper } from '@mui/material';
+import { TextField, Button, Box, CircularProgress, Snackbar, Alert, FormControlLabel, Checkbox, Typography, Grid } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import ReactQuill from 'react-quill'; // Import ReactQuill
-import 'react-quill/dist/quill.snow.css'; // Import Quill styles
 import { useNavigate } from 'react-router-dom';
 
 const theme = createTheme({
@@ -30,21 +28,19 @@ const theme = createTheme({
   },
 });
 
-function AddBlog() {
+function AddStore() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    title: '',
-    client_name: '',
-    short_desc: '',
-    category: '',
-    author: '',
-    all_data: '',
-    banner: '',
-    campaign_link: '',
+    store_name: '',
+    store_link: '',
+    store_img: '',
+    about_store: '',
+    term_conditions: '',
+    store_live: false,
     meta_keyword: '',
-    post_data: false,
-    trending: false,
+    meta_disc: '',
+    meta_title: '',
   });
 
   const [loading, setLoading] = useState(false);
@@ -61,20 +57,12 @@ function AddBlog() {
     }));
   };
 
-  // Handle checkbox change for post_data and trending
+  // Handle checkbox change for store_live
   const handleCheckboxChange = (e) => {
     const { name, checked } = e.target;
     setFormData((prevState) => ({
       ...prevState,
       [name]: checked,
-    }));
-  };
-
-  // Handle change in the rich text editor (All Data)
-  const handleEditorChange = (value) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      all_data: value,
     }));
   };
 
@@ -97,7 +85,7 @@ function AddBlog() {
 
     try {
       const token = localStorage.getItem('access_token');
-      const response = await fetch('http://api.xpediagames.com/api/blog', {
+      const response = await fetch('http://api.xpediagames.com/api/store', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -110,16 +98,16 @@ function AddBlog() {
       });
 
       if (response.ok) {
-        const newBlog = await response.json();
-        showSnackbar('Blog added successfully', 'success');
-        navigate('/blog');
-
+        const newStore = await response.json();
+        showSnackbar('Store added successfully', 'success');
+        navigate('/store');
+        
       } else {
-        showSnackbar('Error adding the blog', 'error');
+        showSnackbar('Error adding the store', 'error');
       }
     } catch (error) {
-      console.error('Error adding blog:', error);
-      showSnackbar('Error adding the blog', 'error');
+      console.error('Error adding store:', error);
+      showSnackbar('Error adding the store', 'error');
     } finally {
       setLoading(false);
     }
@@ -129,32 +117,32 @@ function AddBlog() {
     <ThemeProvider theme={theme}>
       <Box sx={{ padding: '20px', maxWidth: '1000px', margin: 'auto' }}>
         <Typography variant="h4" gutterBottom color="text.primary" sx={{ fontWeight: 'bold', textAlign: 'center' }}>
-          Add New Blog
+          Add New Store
         </Typography>
 
         <form onSubmit={handleSubmit}>
-          {/* Grid layout for Title and Client Name */}
+          {/* Grid layout for Store Name and Store Link */}
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
-                label="Title"
+                label="Store Name"
                 variant="outlined"
                 fullWidth
                 margin="normal"
-                name="title"
-                value={formData.title}
+                name="store_name"
+                value={formData.store_name}
                 onChange={handleInputChange}
                 sx={{ backgroundColor: '#2a2a2a', borderRadius: '8px' }}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
-                label="Client Name"
+                label="Store Link"
                 variant="outlined"
                 fullWidth
                 margin="normal"
-                name="client_name"
-                value={formData.client_name}
+                name="store_link"
+                value={formData.store_link}
                 onChange={handleInputChange}
                 sx={{ backgroundColor: '#2a2a2a', borderRadius: '8px' }}
               />
@@ -163,52 +151,32 @@ function AddBlog() {
 
           {/* Other form fields */}
           <TextField
-            label="Short Description"
+            label="Store Image URL"
             variant="outlined"
             fullWidth
             margin="normal"
-            name="short_desc"
-            value={formData.short_desc}
+            name="store_img"
+            value={formData.store_img}
             onChange={handleInputChange}
             sx={{ backgroundColor: '#2a2a2a', borderRadius: '8px' }}
           />
           <TextField
-            label="Category"
+            label="About Store"
             variant="outlined"
             fullWidth
             margin="normal"
-            name="category"
-            value={formData.category}
+            name="about_store"
+            value={formData.about_store}
             onChange={handleInputChange}
             sx={{ backgroundColor: '#2a2a2a', borderRadius: '8px' }}
           />
           <TextField
-            label="Author"
+            label="Terms and Conditions"
             variant="outlined"
             fullWidth
             margin="normal"
-            name="author"
-            value={formData.author}
-            onChange={handleInputChange}
-            sx={{ backgroundColor: '#2a2a2a', borderRadius: '8px' }}
-          />
-          <TextField
-            label="Banner URL"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            name="banner"
-            value={formData.banner}
-            onChange={handleInputChange}
-            sx={{ backgroundColor: '#2a2a2a', borderRadius: '8px' }}
-          />
-          <TextField
-            label="Campaign Link"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            name="campaign_link"
-            value={formData.campaign_link}
+            name="term_conditions"
+            value={formData.term_conditions}
             onChange={handleInputChange}
             sx={{ backgroundColor: '#2a2a2a', borderRadius: '8px' }}
           />
@@ -222,43 +190,31 @@ function AddBlog() {
             onChange={handleInputChange}
             sx={{ backgroundColor: '#2a2a2a', borderRadius: '8px' }}
           />
-
-          {/* Rich Text Editor for All Data */}
-          <ReactQuill
-            value={formData.all_data}
-            onChange={handleEditorChange}
-            modules={{
-              toolbar: [
-                [{ 'header': '1' }, { 'header': '2' }, { 'font': [] }],
-                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                ['bold', 'italic', 'underline'],
-                ['link'],
-                [{ 'align': [] }],
-                ['image'],
-                ['blockquote'],
-                [{ 'direction': 'rtl' }],
-              ],
-            }}
-            theme="snow"
-            placeholder="Enter detailed blog content here..."
-            style={{
-              backgroundColor: 'white',
-              height: '500px',
-              color: 'black',
-              borderRadius: '8px',
-              padding: '10px',
-            }}
+          <TextField
+            label="Meta Description"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            name="meta_disc"
+            value={formData.meta_disc}
+            onChange={handleInputChange}
+            sx={{ backgroundColor: '#2a2a2a', borderRadius: '8px' }}
+          />
+          <TextField
+            label="Meta Title"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            name="meta_title"
+            value={formData.meta_title}
+            onChange={handleInputChange}
+            sx={{ backgroundColor: '#2a2a2a', borderRadius: '8px' }}
           />
 
-          {/* Checkbox for Post Data and Trending */}
+          {/* Checkbox for Store Live */}
           <FormControlLabel
-            control={<Checkbox checked={formData.post_data} onChange={handleCheckboxChange} name="post_data" />}
-            label="Post Data"
-            sx={{ color: 'text.primary' }}
-          />
-          <FormControlLabel
-            control={<Checkbox checked={formData.trending} onChange={handleCheckboxChange} name="trending" />}
-            label="Trending"
+            control={<Checkbox checked={formData.store_live} onChange={handleCheckboxChange} name="store_live" />}
+            label="Store Live"
             sx={{ color: 'text.primary' }}
           />
 
@@ -311,4 +267,4 @@ function AddBlog() {
   );
 }
 
-export default AddBlog;
+export default AddStore;

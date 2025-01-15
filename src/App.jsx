@@ -8,11 +8,12 @@ import Blog from "./components/Blog/Blog";
 import Game from "./components/Sidebar/Game";
 import Promo from "./components/Sidebar/Promo";
 import { Outlet } from "react-router-dom";
-import Store from "./components/Sidebar/Store";
-import Banner from "./components/Sidebar/Banner";
+import Store from "./components/Store/Store";
+import Banner from "./components/Banner/Banner";
 import User from "./components/Sidebar/User";
 import TrendingGame from "./components/Sidebar/TrendingGame";
 import AddBlog from "./components/Blog/AddBlog";
+import AddStore from "./components/Store/AddStore";
 
 // PrivateRoute component to handle access control
 const PrivateRoute = ({ element }) => {
@@ -76,6 +77,7 @@ const App = () => {
             <Route path="/user" element={<PrivateRoute element={<User />} />} />
             <Route path="/trendinggame" element={<PrivateRoute element={<TrendingGame />} />} />
             <Route path="/addBlog" element={<PrivateRoute element={<AddBlog />} />} />
+            <Route path="/addStore" element={<PrivateRoute element={<AddStore />} />} />
           </Route>
 
           {/* Redirect undefined routes to login page */}
