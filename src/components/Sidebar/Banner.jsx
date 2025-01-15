@@ -342,7 +342,7 @@ function Banner() {
             maxWidth: '600px',
             border: "1px solid #f29c1e",
             height: '43vh',
-            // overflowY: 'scroll',
+            overflowY: 'scroll',
           }}>
             <Typography variant="h6" gutterBottom>{editingBanner ? 'Edit Banner' : 'Add Banner'}</Typography>
 
