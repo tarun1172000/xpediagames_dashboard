@@ -174,10 +174,21 @@ function Store() {
   };
 
   // Handle viewing store details
-  const handleViewStore = (id) => {
-    const store = storeData.find((store) => store._id === id);
-    setViewingStore(store);
-    setViewingOpen(true);
+  const handleViewStore = async (id) => {
+    try {
+      // Fetch specific store data by ID
+      const response = await fetch(`http://api.xpediagames.com/api/store/${id}`);
+      if (response.ok) {
+        const store = await response.json();
+        setViewingStore(store);  // Set the fetched store data to viewingStore state
+        setViewingOpen(true);     // Open the modal to show the store details
+      } else {
+        showSnackbar('Error fetching store details', 'error');
+      }
+    } catch (error) {
+      console.error('Error fetching store:', error);
+      showSnackbar('Error fetching store details', 'error');
+    }
   };
 
   const handleSnackbarClose = () => {
@@ -206,7 +217,7 @@ function Store() {
               marginRight: '12px',
             }}
           >
-           <Link to="/addStore" style={{ color: 'black', textDecoration: 'none' }}>
+            <Link to="/addStore" style={{ color: 'black', textDecoration: 'none' }}>
               Add New Store
             </Link>
           </Button>
@@ -232,7 +243,8 @@ function Store() {
           ) : (
             storeData.map((store) => (
               <Grid item xs={12} sm={6} md={3} key={store._id}>
-                <Card  sx={{
+                <Card
+                  sx={{
                     cursor: 'pointer',
                     transition: 'transform 0.3s ease, box-shadow 0.3s ease',
                     '&:hover': { transform: 'scale(1.05)', boxShadow: '0 4px 20px rgba(242, 156, 30, 0.5)' },
@@ -242,8 +254,10 @@ function Store() {
                     overflow: 'hidden',
                     '&:hover .icon-container': {
                       opacity: 1,
-                    },}}>
-                  <CardMedia component="img" height="200" image={store.store_img} alt={store.store_name} />
+                    },
+                  }}
+                >
+                  <CardMedia component="img" height="200" objectFit="contain" image={store.store_img} alt={store.store_name} />
                   <CardContent>
                     <Typography variant="h6" noWrap color="text.primary">
                       {store.store_name}
@@ -282,110 +296,93 @@ function Store() {
           </Alert>
         </Snackbar>
 
-        {/* Modal for adding/editing Store */}
-        <Modal open={open} onClose={handleCloseModal} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        {/* Modal for viewing store details */}
+        <Modal
+          open={viewingOpen}
+          onClose={() => setViewingOpen(false)}
+          sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
           <Box
             sx={{
-              padding: '20px',
-              backgroundColor: 'background.default',
-              borderRadius: '8px',
-              maxWidth: '600px',
-              border: '1px solid #f29c1e',
-              height: '80vh',
-              overflowY: 'scroll',
+              padding: '30px',
+              backgroundColor: 'background.paper', // Change to background.paper
+              borderRadius: '12px', // Increase border radius
+              maxWidth: '800px', // Increase maxWidth
+              width: '100%',
+              border: '1px solid #f29c1e', // Keep the existing border
+              height: '40vh',
+              overflowY: 'auto', // Change to auto for smoother scrolling
+              boxShadow: 24, // Add a box shadow for better UI
             }}
           >
-            <Typography variant="h6" gutterBottom>{editingStore ? 'Edit Store' : 'Add Store'}</Typography>
+            {viewingStore ? (
+              <>
+                {/* Store Name */}
+                <Typography variant="h4" color="text.primary" gutterBottom sx={{ fontWeight: 'bold' }}>
+                  {viewingStore.store_name}
+                </Typography>
 
-            <form onSubmit={handleSubmit}>
-              <TextField
-                label="Store Name"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                name="store_name"
-                value={formData.store_name}
-                onChange={handleInputChange}
-              />
-              <TextField
-                label="Store Link"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                name="store_link"
-                value={formData.store_link}
-                onChange={handleInputChange}
-              />
-              <TextField
-                label="Store Image URL"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                name="store_img"
-                value={formData.store_img}
-                onChange={handleInputChange}
-              />
-              <TextField
-                label="About Store"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                name="about_store"
-                value={formData.about_store}
-                onChange={handleInputChange}
-              />
-              <TextField
-                label="Store Terms and Conditions"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                name="term_conditions"
-                value={formData.term_conditions}
-                onChange={handleInputChange}
-              />
-              <TextField
-                label="Meta Keywords"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                name="meta_keyword"
-                value={formData.meta_keyword}
-                onChange={handleInputChange}
-              />
-              <TextField
-                label="Meta Description"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                name="meta_disc"
-                value={formData.meta_disc}
-                onChange={handleInputChange}
-              />
-              <TextField
-                label="Meta Title"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                name="meta_title"
-                value={formData.meta_title}
-                onChange={handleInputChange}
-              />
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  type="submit"
-                  disabled={loading} // Disable the button when loading
-                >
-                  {loading ? <CircularProgress size={24} /> : 'Submit'}
-                </Button>
-                <Button variant="outlined" onClick={handleCloseModal}>
-                  Cancel
-                </Button>
-              </Box>
-            </form>
+                {/* About Store */}
+                <Typography variant="body1" color="text.secondary" gutterBottom>
+                  <strong>About Store:</strong> {viewingStore.about_store}
+                </Typography>
+
+                {/* Store Link */}
+                <Typography variant="body1" color="text.secondary" gutterBottom>
+                  <strong>Store Link:</strong>
+                  <a href={viewingStore.store_link} target="_blank" rel="noopener noreferrer" style={{ color: '#f29c1e' }}>
+                    {viewingStore.store_link}
+                  </a>
+                </Typography>
+
+                {/* Terms and Conditions */}
+                <Typography variant="body1" color="text.secondary" gutterBottom>
+                  <strong>Terms and Conditions:</strong> {viewingStore.term_conditions}
+                </Typography>
+
+                {/* Meta Keywords */}
+                <Typography variant="body1" color="text.secondary" gutterBottom>
+                  <strong>Meta Keywords:</strong> {viewingStore.meta_keyword}
+                </Typography>
+
+                {/* Meta Description */}
+                <Typography variant="body1" color="text.secondary" gutterBottom>
+                  <strong>Meta Description:</strong> {viewingStore.meta_disc}
+                </Typography>
+
+                {/* Meta Title */}
+                <Typography variant="body1" color="text.secondary" gutterBottom>
+                  <strong>Meta Title:</strong> {viewingStore.meta_title}
+                </Typography>
+
+              </>
+            ) : (
+              <Typography variant="body1" color="text.secondary">
+                Loading store details...
+              </Typography>
+            )}
+
+            {/* Close Button */}
+            <Button
+              onClick={() => setViewingOpen(false)}
+              color="primary"
+              variant="contained"
+              sx={{
+                marginTop: '20px',
+                width: '100%',
+                padding: '10px 0',
+                borderRadius: '8px',
+                backgroundColor: '#f29c1e',
+                '&:hover': {
+                  backgroundColor: '#d17a1e',
+                },
+              }}
+            >
+              Close
+            </Button>
           </Box>
         </Modal>
+
       </Box>
     </ThemeProvider>
   );
