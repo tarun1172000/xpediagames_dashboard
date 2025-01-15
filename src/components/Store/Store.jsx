@@ -310,7 +310,7 @@ function Store() {
               maxWidth: '800px', // Increase maxWidth
               width: '100%',
               border: '1px solid #f29c1e', // Keep the existing border
-              height: '40vh',
+              height: '50vh',
               overflowY: 'auto', // Change to auto for smoother scrolling
               boxShadow: 24, // Add a box shadow for better UI
             }}
