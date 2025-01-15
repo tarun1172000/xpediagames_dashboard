@@ -10,30 +10,28 @@ import {
   Button,
   Modal,
   TextField,
-  FormControlLabel,
-  Checkbox,
   CircularProgress,
   Snackbar,
   Alert,
 } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { Edit as EditIcon, Delete as DeleteIcon, Visibility as VisibilityIcon } from '@mui/icons-material';
-import * as XLSX from 'xlsx'; // For handling Excel files
+import * as XLSX from 'xlsx';
 
 // Define the dark theme
 const theme = createTheme({
   palette: {
     mode: 'dark',
     primary: {
-      main: '#f29c1e', // Accent color
+      main: '#f29c1e',
     },
     background: {
-      default: 'black', // Dark background
-      paper: '#1c0c02', // Paper background for cards
+      default: 'black',
+      paper: '#1c0c02',
     },
     text: {
-      primary: '#f48d4c', // White text
-      secondary: '#bbbbbb', // Lighter text
+      primary: '#f48d4c',
+      secondary: '#bbbbbb',
     },
   },
   typography: {
@@ -47,47 +45,45 @@ const theme = createTheme({
 });
 
 function Banner() {
-  const [BannerData, setBannerData] = useState([]);
-  const [open, setOpen] = useState(false); // State to control Modal visibility
-  const [editingBanner, setEditingBanner] = useState(null); // Banner being edited
+  const [bannerData, setBannerData] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [editingBanner, setEditingBanner] = useState(null);
   const [formData, setFormData] = useState({
     store_name: '',
-    store_link : '',
+    store_link: '',
     banner_img: '',
   });
-
-  const [loading, setLoading] = useState(false); // Loading state for the PUT request
+  const [loading, setLoading] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState('success'); // 'success', 'error'
-
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const [viewingBanner, setViewingBanner] = useState(null);
-  const [viewingOpen, setViewingOpen] = useState(false); // Modal visibility for viewing Banner
-
-  const [excelFile, setExcelFile] = useState(null); // State to store selected file
+  const [viewingOpen, setViewingOpen] = useState(false);
+  const [excelFile, setExcelFile] = useState(null);
 
   // Fetch Banner data on component mount
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('http://api.xpediagames.com/api/banners');
-        const data = await response.json();
-        setBannerData(data);
-      } catch (error) {
-        console.error('Error fetching Banner data:', error);
-      }
-    };
-
-    fetchData();
+    fetchBanners();
   }, []);
 
-  // Open the modal to edit a Banner
-  const handleOpenModal = (Banner) => {
-    setEditingBanner(Banner);
+  // Fetch all banners
+  const fetchBanners = async () => {
+    try {
+      const response = await fetch('http://api.xpediagames.com/api/banners');
+      const data = await response.json();
+      setBannerData(data);
+    } catch (error) {
+      console.error('Error fetching banners:', error);
+    }
+  };
+
+  // Open modal to edit a banner
+  const handleOpenModal = (banner) => {
+    setEditingBanner(banner);
     setFormData({
-      store_name: Banner.store_name,
-      store_link : Banner.store_link,
-      banner_img: Banner.banner_img,
+      store_name: banner.store_name,
+      store_link: banner.store_link,
+      banner_img: banner.banner_img,
     });
     setOpen(true);
   };
@@ -105,14 +101,7 @@ function Banner() {
     }));
   };
 
-  const handleCheckboxChange = (e) => {
-    const { name, checked } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: checked,
-    }));
-  };
-
+  // Handle form submission (for PUT)
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -131,7 +120,7 @@ function Banner() {
       if (response.ok) {
         const updatedBanner = await response.json();
         setBannerData((prevBanners) =>
-          prevBanners.map((Banner) => (Banner._id === updatedBanner._id ? updatedBanner : Banner))
+          prevBanners.map((banner) => (banner._id === updatedBanner._id ? updatedBanner : banner))
         );
         showSnackbar('Banner updated successfully', 'success');
         handleCloseModal();
@@ -149,6 +138,7 @@ function Banner() {
     }
   };
 
+  // Handle deleting a banner
   const handleDeleteBanner = async (id) => {
     try {
       const token = localStorage.getItem('access_token');
@@ -161,7 +151,7 @@ function Banner() {
       });
 
       if (response.ok) {
-        setBannerData((prevBanners) => prevBanners.filter((Banner) => Banner._id !== id));
+        setBannerData((prevBanners) => prevBanners.filter((banner) => banner._id !== id));
         showSnackbar('Banner deleted successfully', 'success');
       } else {
         showSnackbar('Error deleting the Banner', 'error');
@@ -172,40 +162,25 @@ function Banner() {
     }
   };
 
-  const handleViewBanner = async (id) => {
-    try {
-      const response = await fetch(`http://api.xpediagames.com/api/Banner/${id}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const Banner = await response.json();
-        setViewingBanner(Banner);
-        setViewingOpen(true);
-      } else {
-        showSnackbar('Error fetching the Banner details', 'error');
-      }
-    } catch (error) {
-      console.error('Error fetching Banner:', error);
-      showSnackbar('Error fetching the Banner details', 'error');
-    }
+  // Handle viewing banner details
+  const handleViewBanner = (id) => {
+    const banner = bannerData.find((banner) => banner._id === id);
+    setViewingBanner(banner);
+    setViewingOpen(true);
   };
 
-  const handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') return;
+  const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
 
+  // Show snackbar message
   const showSnackbar = (message, severity = 'success') => {
     setSnackbarMessage(message);
     setSnackbarSeverity(severity);
     setSnackbarOpen(true);
   };
 
-  // Handle the file change (for Excel upload)
+  // Handle file change for Excel upload
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file && file.name.endsWith('.xlsx')) {
@@ -215,6 +190,7 @@ function Banner() {
     }
   };
 
+  // Handle Excel upload
   const handleExcelUpload = async () => {
     if (!excelFile) {
       showSnackbar('Please select an Excel file first.', 'error');
@@ -225,8 +201,7 @@ function Banner() {
     reader.onload = async (e) => {
       const binaryStr = e.target.result;
       const workBook = XLSX.read(binaryStr, { type: 'binary' });
-
-      const sheetName = workBook.SheetNames[0]; // Assuming the first sheet is the one we want
+      const sheetName = workBook.SheetNames[0];
       const sheet = workBook.Sheets[sheetName];
       const data = XLSX.utils.sheet_to_json(sheet);
 
@@ -238,12 +213,12 @@ function Banner() {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ banners: data }), // Assuming the API accepts the banner data as JSON
+          body: JSON.stringify({ banners: data }),
         });
 
         if (response.ok) {
           showSnackbar('Excel file uploaded successfully', 'success');
-          setBannerData((prevData) => [...prevData, ...data]); // Optionally update the BannerData state
+          setBannerData((prevData) => [...prevData, ...data]);
         } else {
           showSnackbar('Error uploading Excel file', 'error');
         }
@@ -259,7 +234,7 @@ function Banner() {
     <ThemeProvider theme={theme}>
       <Box sx={{ paddingRight: '10px', paddingLeft: '10px', maxWidth: '1200px', margin: '50px auto' }}>
         {/* Add New Banner Button */}
-        <Box sx={{ display: "flex", justifyContent: "flex-end", marginBottom: "25px" }}>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '25px' }}>
           <Button
             variant="contained"
             color="primary"
@@ -267,12 +242,7 @@ function Banner() {
               padding: '12px 25px',
               fontSize: '16px',
               borderRadius: '8px',
-              marginRight: "12px",
-              boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.3)',
-              '&:hover': {
-                backgroundColor: '#f2a800',
-                boxShadow: '0px 6px 10px rgba(0, 0, 0, 0.4)',
-              },
+              marginRight: '12px',
             }}
           >
             Add New Banner
@@ -285,12 +255,7 @@ function Banner() {
               padding: '12px 25px',
               fontSize: '16px',
               borderRadius: '8px',
-              marginRight: "12px",
-              boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.3)',
-              '&:hover': {
-                backgroundColor: '#f2a800',
-                boxShadow: '0px 6px 10px rgba(0, 0, 0, 0.4)',
-              },
+              marginRight: '12px',
             }}
             onClick={() => document.getElementById('excel-file-input').click()}
           >
@@ -312,12 +277,7 @@ function Banner() {
               padding: '12px 25px',
               fontSize: '16px',
               borderRadius: '8px',
-              marginRight: "12px",
-              boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.3)',
-              '&:hover': {
-                backgroundColor: '#f2a800',
-                boxShadow: '0px 6px 10px rgba(0, 0, 0, 0.4)',
-              },
+              marginRight: '12px',
             }}
           >
             Submit Excel
@@ -325,62 +285,29 @@ function Banner() {
         </Box>
 
         <Grid container spacing={4}>
-          {BannerData.length === 0 ? (
+          {bannerData.length === 0 ? (
             <Typography variant="h6" align="center" fullWidth>
               Loading...
             </Typography>
           ) : (
-            BannerData.map((Banner) => (
-              <Grid item xs={12} sm={6} md={3} key={Banner._id}>
-                <Card
-                  sx={{
-                    cursor: 'pointer',
-                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                    '&:hover': { transform: 'scale(1.05)', boxShadow: '0 4px 20px rgba(242, 156, 30, 0.5)' },
-                    backgroundColor: 'background.paper',
-                    boxShadow: 3,
-                    position: 'relative',
-                    overflow: 'hidden',
-                    '&:hover .icon-container': {
-                      opacity: 1,
-                    },
-                  }}
-                >
-                  <CardMedia component="img" height="200" image={Banner.banner_img} alt={Banner.store_name} />
+            bannerData.map((banner) => (
+              <Grid item xs={12} sm={6} md={3} key={banner._id}>
+                <Card sx={{ backgroundColor: 'background.paper', boxShadow: 3, position: 'relative' }}>
+                  <CardMedia component="img" height="200" image={banner.banner_img} alt={banner.store_name} />
                   <CardContent>
                     <Typography variant="h6" noWrap color="text.primary">
-                      {Banner.store_name}
+                      {banner.store_name}
                     </Typography>
                   </CardContent>
 
-                  <Box
-                    className="icon-container"
-                    sx={{
-                      position: 'absolute',
-                      top: '5px',
-                      right: '10px',
-                      opacity: 0,
-                      transition: 'opacity 0.3s ease',
-                    }}
-                  >
-                    <IconButton
-                      color="primary"
-                      sx={{ marginRight: '5px' }}
-                      onClick={() => handleViewBanner(Banner._id)} // Open view modal
-                    >
+                  <Box sx={{ position: 'absolute', top: '5px', right: '10px' }}>
+                    <IconButton color="primary" onClick={() => handleViewBanner(banner._id)}>
                       <VisibilityIcon />
                     </IconButton>
-                    <IconButton
-                      color="primary"
-                      sx={{ marginRight: '5px' }}
-                      onClick={() => handleOpenModal(Banner)} // Open edit modal
-                    >
+                    <IconButton color="primary" onClick={() => handleOpenModal(banner)}>
                       <EditIcon />
                     </IconButton>
-                    <IconButton
-                      color="primary"
-                      onClick={() => handleDeleteBanner(Banner._id)} // Delete Banner
-                    >
+                    <IconButton color="primary" onClick={() => handleDeleteBanner(banner._id)}>
                       <DeleteIcon />
                     </IconButton>
                   </Box>
@@ -400,13 +327,7 @@ function Banner() {
           <Alert
             onClose={handleSnackbarClose}
             severity={snackbarSeverity}
-            sx={{
-              width: '100%',
-              color: '#f29c1e',
-              backgroundColor: "black",
-              border: "1px solid #f29c1e ",
-              boxShadow: '0px 4px 10px rgba(242, 156, 30, 0.5)', // Set the text color to #f29c1e
-            }}
+            sx={{ width: '100%' }}
           >
             {snackbarMessage}
           </Alert>
@@ -420,103 +341,50 @@ function Banner() {
             borderRadius: '8px',
             maxWidth: '600px',
             border: "1px solid #f29c1e",
-            height: '80vh',
-            overflowY: 'scroll',
+            height: '43vh',
+            // overflowY: 'scroll',
           }}>
             <Typography variant="h6" gutterBottom>{editingBanner ? 'Edit Banner' : 'Add Banner'}</Typography>
 
             <form onSubmit={handleSubmit}>
               <TextField
-                label="Title"
+                label="Store Name"
                 variant="outlined"
                 fullWidth
                 margin="normal"
-                name="title"
-                value={formData.title}
+                name="store_name"
+                value={formData.store_name}
                 onChange={handleInputChange}
               />
               <TextField
-                label="Client Name"
+                label="Store Link"
                 variant="outlined"
                 fullWidth
                 margin="normal"
-                name="client_name"
-                value={formData.client_name}
+                name="store_link"
+                value={formData.store_link}
                 onChange={handleInputChange}
               />
               <TextField
-                label="Short Description"
+                label="Banner Image URL"
                 variant="outlined"
                 fullWidth
                 margin="normal"
-                name="short_desc"
-                value={formData.short_desc}
+                name="banner_img"
+                value={formData.banner_img}
                 onChange={handleInputChange}
               />
-              <TextField
-                label="Category"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                name="category"
-                value={formData.category}
-                onChange={handleInputChange}
-              />
-              <TextField
-                label="Author"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                name="author"
-                value={formData.author}
-                onChange={handleInputChange}
-              />
-              <TextField
-                label="All Data"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                name="all_data"
-                value={formData.all_data}
-                onChange={handleInputChange}
-              />
-              <TextField
-                label="Banner URL"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                name="banner"
-                value={formData.banner}
-                onChange={handleInputChange}
-              />
-              <TextField
-                label="Campaign Link"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                name="campaign_link"
-                value={formData.campaign_link}
-                onChange={handleInputChange}
-              />
-              <TextField
-                label="Meta Keywords"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                name="meta_keywords"
-                value={formData.meta_keywords}
-                onChange={handleInputChange}
-              />
-
-              <Button
-                variant="contained"
-                type="submit"
-                color="primary"
-                sx={{ marginTop: '15px' }}
-                disabled={loading}
-              >
-                {loading ? <CircularProgress size={24} /> : 'Save Banner'}
-              </Button>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                  disabled={loading} // Disable the button when loading
+                >
+                  {loading ? <CircularProgress size={24} /> : 'Submit'}
+                </Button>
+                <Button variant="outlined" onClick={handleCloseModal}>Cancel</Button>
+              </Box>
             </form>
           </Box>
         </Modal>
@@ -526,4 +394,3 @@ function Banner() {
 }
 
 export default Banner;
-

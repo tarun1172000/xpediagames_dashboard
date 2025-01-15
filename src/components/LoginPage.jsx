@@ -59,7 +59,7 @@ const LoginPage = () => {
         }
 
         // Navigate to dashboard after successful login
-        navigate('/Blog', { replace: true });
+        navigate('/');
       } else {
         // Handle API errors (e.g. invalid login)
         setError(data.message || 'Login failed');
