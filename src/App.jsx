@@ -18,9 +18,9 @@ import AddStore from "./components/Store/AddStore";
 // PrivateRoute component to handle access control
 const PrivateRoute = ({ element }) => {
   const accessToken = localStorage.getItem('access_token');
-  
+  console.log("fv",accessToken)
   if (!accessToken) {
-    return <Navigate to="/login" replace />; // Redirect to /login if no access token
+    return <Navigate to="/login" />; 
   }
 
   return element;

@@ -46,7 +46,7 @@ const theme = createTheme({
 
 function Store() {
   const [storeData, setStoreData] = useState([]);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false); // State for the Edit Modal
   const [editingStore, setEditingStore] = useState(null);
   const [formData, setFormData] = useState({
     store_name: '',
@@ -64,7 +64,7 @@ function Store() {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   const [viewingStore, setViewingStore] = useState(null);
-  const [viewingOpen, setViewingOpen] = useState(false);
+  const [viewingOpen, setViewingOpen] = useState(false); // State for Viewing Modal
 
   // Fetch Store data on component mount
   useEffect(() => {
@@ -96,7 +96,7 @@ function Store() {
       meta_disc: store.meta_disc,
       meta_title: store.meta_title,
     });
-    setOpen(true);
+    setOpen(true); // Open the Edit Modal
   };
 
   const handleCloseModal = () => {
@@ -221,18 +221,6 @@ function Store() {
               Add New Store
             </Link>
           </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            sx={{
-              padding: '12px 25px',
-              fontSize: '16px',
-              borderRadius: '8px',
-              marginRight: '12px',
-            }}
-          >
-            Upload Excel
-          </Button>
         </Box>
 
         <Grid container spacing={4}>
@@ -305,64 +293,55 @@ function Store() {
           <Box
             sx={{
               padding: '30px',
-              backgroundColor: 'background.paper', // Change to background.paper
-              borderRadius: '12px', // Increase border radius
-              maxWidth: '800px', // Increase maxWidth
+              backgroundColor: 'background.paper',
+              borderRadius: '12px',
+              maxWidth: '800px',
               width: '100%',
-              border: '1px solid #f29c1e', // Keep the existing border
+              border: '1px solid #f29c1e',
               height: '50vh',
-              overflowY: 'auto', // Change to auto for smoother scrolling
-              boxShadow: 24, // Add a box shadow for better UI
+              overflowY: 'auto',
+              boxShadow: 24,
             }}
           >
             {viewingStore ? (
               <>
-                {/* Store Name */}
                 <Typography variant="h4" color="text.primary" gutterBottom sx={{ fontWeight: 'bold' }}>
                   {viewingStore.store_name}
                 </Typography>
-
-                {/* About Store */}
                 <Typography variant="body1" color="text.secondary" gutterBottom>
                   <strong>About Store:</strong> {viewingStore.about_store}
                 </Typography>
-
-                {/* Store Link */}
                 <Typography variant="body1" color="text.secondary" gutterBottom>
-                  <strong>Store Link:</strong>
+                  <strong>Store Link:</strong>{' '}
                   <a href={viewingStore.store_link} target="_blank" rel="noopener noreferrer" style={{ color: '#f29c1e' }}>
                     {viewingStore.store_link}
                   </a>
                 </Typography>
-
-                {/* Terms and Conditions */}
                 <Typography variant="body1" color="text.secondary" gutterBottom>
                   <strong>Terms and Conditions:</strong> {viewingStore.term_conditions}
                 </Typography>
-
-                {/* Meta Keywords */}
                 <Typography variant="body1" color="text.secondary" gutterBottom>
                   <strong>Meta Keywords:</strong> {viewingStore.meta_keyword}
                 </Typography>
-
-                {/* Meta Description */}
                 <Typography variant="body1" color="text.secondary" gutterBottom>
                   <strong>Meta Description:</strong> {viewingStore.meta_disc}
                 </Typography>
-
-                {/* Meta Title */}
                 <Typography variant="body1" color="text.secondary" gutterBottom>
                   <strong>Meta Title:</strong> {viewingStore.meta_title}
                 </Typography>
+                <Box sx={{ marginBottom: '20px',height :"60vh", width :"auto", borderRadius: '8px', overflow: 'hidden' }}>
+                  <img
+                    src={viewingStore.store_img}
+                    alt={viewingStore.store_name
 
+                    }
+                    style={{ width: '100%', borderRadius: '8px', boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)' }}
+                  />
+                </Box>
               </>
             ) : (
-              <Typography variant="body1" color="text.secondary">
-                Loading store details...
-              </Typography>
+              <Typography variant="body1" color="text.secondary">Loading store details...</Typography>
             )}
-
-            {/* Close Button */}
             <Button
               onClick={() => setViewingOpen(false)}
               color="primary"
@@ -383,6 +362,106 @@ function Store() {
           </Box>
         </Modal>
 
+        {/* Modal for editing store */}
+        <Modal
+          open={open}
+          onClose={handleCloseModal}
+          sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
+          <Box
+            sx={{
+              padding: '30px',
+              backgroundColor: 'background.paper',
+              borderRadius: '12px',
+              maxWidth: '800px',
+              width: '100%',
+              border: '1px solid #f29c1e',
+              overflowY: 'auto',
+              boxShadow: 24,
+            }}
+          >
+            <Typography variant="h4" color="text.primary" sx={{ fontWeight: 'bold', marginBottom: '20px' }}>
+              Edit Store
+            </Typography>
+            <form onSubmit={handleSubmit}>
+              <TextField
+                fullWidth
+                label="Store Name"
+                name="store_name"
+                value={formData.store_name}
+                onChange={handleInputChange}
+                sx={{ marginBottom: '20px' }}
+              />
+              <TextField
+                fullWidth
+                label="Store Link"
+                name="store_link"
+                value={formData.store_link}
+                onChange={handleInputChange}
+                sx={{ marginBottom: '20px' }}
+              />
+              <TextField
+                fullWidth
+                label="Store Image"
+                name="store_img"
+                value={formData.store_img}
+                onChange={handleInputChange}
+                sx={{ marginBottom: '20px' }}
+              />
+              <TextField
+                fullWidth
+                label="About Store"
+                name="about_store"
+                value={formData.about_store}
+                onChange={handleInputChange}
+                sx={{ marginBottom: '20px' }}
+              />
+              <TextField
+                fullWidth
+                label="Terms and Conditions"
+                name="term_conditions"
+                value={formData.term_conditions}
+                onChange={handleInputChange}
+                sx={{ marginBottom: '20px' }}
+              />
+              <TextField
+                fullWidth
+                label="Meta Keywords"
+                name="meta_keyword"
+                value={formData.meta_keyword}
+                onChange={handleInputChange}
+                sx={{ marginBottom: '20px' }}
+              />
+              <TextField
+                fullWidth
+                label="Meta Description"
+                name="meta_disc"
+                value={formData.meta_disc}
+                onChange={handleInputChange}
+                sx={{ marginBottom: '20px' }}
+              />
+              <TextField
+                fullWidth
+                label="Meta Title"
+                name="meta_title"
+                value={formData.meta_title}
+                onChange={handleInputChange}
+                sx={{ marginBottom: '20px' }}
+              />
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                  disabled={loading} // Disable the button when loading
+                >
+                  {loading ? <CircularProgress size={24} /> : 'Submit'}
+                </Button>
+                <Button variant="outlined" onClick={handleCloseModal}>Cancel</Button>
+              </Box>
+            </form>
+          </Box>
+        </Modal>
       </Box>
     </ThemeProvider>
   );
