@@ -30,7 +30,7 @@ const LoginPage = () => {
     setLoading(true); // Set loading to true when the login starts
 
     try {
-      const response = await fetch('http://api.xpediagames.com/api/login', {
+      const response = await fetch('https://api.xpediagames.com/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
