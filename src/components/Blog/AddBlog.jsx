@@ -97,7 +97,7 @@ function AddBlog() {
 
     try {
       const token = localStorage.getItem('access_token');
-      const response = await fetch('http://api.xpediagames.com/api/blog', {
+      const response = await fetch('https://api.xpediagames.com/api/blog', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
