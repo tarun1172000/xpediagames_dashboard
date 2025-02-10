@@ -85,7 +85,7 @@ function AddStore() {
 
     try {
       const token = localStorage.getItem('access_token');
-      const response = await fetch('http://api.xpediagames.com/api/store', {
+      const response = await fetch('https://api.xpediagames.com/api/store', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
