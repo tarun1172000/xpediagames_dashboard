@@ -78,7 +78,7 @@ function Blog() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://api.xpediagames.com/api/blogs');
+        const response = await fetch('https://api.xpediagames.com/api/blogs');
         const data = await response.json();
         console.log("Blog ", data)
 
@@ -143,7 +143,7 @@ function Blog() {
       const token = localStorage.getItem('access_token');
       console.log("PUT ", token)
 
-      const response = await fetch(`http://api.xpediagames.com/api/blog/${editingBlog._id}`, {
+      const response = await fetch(`https://api.xpediagames.com/api/blog/${editingBlog._id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -186,7 +186,7 @@ function Blog() {
 
       const token = localStorage.getItem('access_token');
 
-      const response = await fetch(`http://api.xpediagames.com/api/blog/${id}`, {
+      const response = await fetch(`https://api.xpediagames.com/api/blog/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -224,7 +224,7 @@ function Blog() {
     try {
       // const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTczNjMyMjg1MCwianRpIjoiZjlhZTQ0YTEtZmFjNS00MzY5LWI0NGQtOGU4ZWUyMGM5MDIxIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InByaXR1bEBmbHloZWFkbWVkaWEuY29tIiwibmJmIjoxNzM2MzIyODUwLCJjc3JmIjoiNDI2YzEwOGYtMzEwOC00YzA3LWI5MzgtZjdkNTNjZTQwODQ5IiwiZXhwIjoxNzM2MzIzNzUwfQ.Z0A-l2Ky5IdAkBiHdEvWxthquwJ_cCooV9UgzmzJEMk";
 
-      const response = await fetch(`http://api.xpediagames.com/api/blog/${id}`, {
+      const response = await fetch(`https://api.xpediagames.com/api/blog/${id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
