@@ -69,7 +69,7 @@ function Banner() {
   // Fetch all banners
   const fetchBanners = async () => {
     try {
-      const response = await fetch('http://api.xpediagames.com/api/banners');
+      const response = await fetch('https://api.xpediagames.com/api/banners');
       const data = await response.json();
       setBannerData(data);
     } catch (error) {
@@ -108,7 +108,7 @@ function Banner() {
 
     try {
       const token = localStorage.getItem('access_token');
-      const response = await fetch(`http://api.xpediagames.com/api/banner/${editingBanner._id}`, {
+      const response = await fetch(`https://api.xpediagames.com/api/banner/${editingBanner._id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -142,7 +142,7 @@ function Banner() {
   const handleDeleteBanner = async (id) => {
     try {
       const token = localStorage.getItem('access_token');
-      const response = await fetch(`http://api.xpediagames.com/api/banner/${id}`, {
+      const response = await fetch(`https://api.xpediagames.com/api/banner/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -207,7 +207,7 @@ function Banner() {
 
       try {
         const token = localStorage.getItem('access_token');
-        const response = await fetch('http://api.xpediagames.com/api/upload-banner-excel', {
+        const response = await fetch('https://api.xpediagames.com/api/upload-banner-excel', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
