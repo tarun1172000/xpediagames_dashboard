@@ -74,7 +74,7 @@ function Store() {
   // Fetch all stores
   const fetchStores = async () => {
     try {
-      const response = await fetch('http://api.xpediagames.com/api/stores');
+      const response = await fetch('https://api.xpediagames.com/api/stores');
       const data = await response.json();
       setStoreData(data);
     } catch (error) {
@@ -119,7 +119,7 @@ function Store() {
 
     try {
       const token = localStorage.getItem('access_token');
-      const response = await fetch(`http://api.xpediagames.com/api/store/${editingStore._id}`, {
+      const response = await fetch(`https://api.xpediagames.com/api/store/${editingStore._id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -153,7 +153,7 @@ function Store() {
   const handleDeleteStore = async (id) => {
     try {
       const token = localStorage.getItem('access_token');
-      const response = await fetch(`http://api.xpediagames.com/api/store/${id}`, {
+      const response = await fetch(`https://api.xpediagames.com/api/store/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -177,7 +177,7 @@ function Store() {
   const handleViewStore = async (id) => {
     try {
       // Fetch specific store data by ID
-      const response = await fetch(`http://api.xpediagames.com/api/store/${id}`);
+      const response = await fetch(`https://api.xpediagames.com/api/store/${id}`);
       if (response.ok) {
         const store = await response.json();
         setViewingStore(store);  // Set the fetched store data to viewingStore state
